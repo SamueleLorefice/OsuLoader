@@ -30,18 +30,20 @@ namespace OsuLoader {
 		/// <returns>The .osu file as BeatMap object</returns>
 		/// <param name="path">File location of the .osu (including the filename itself)</param>
 		public static BeatMap LoadDotOsu(string path) { 
-			//Read of the file as ini
+			#region Read of the file as ini
 			IniFile beatmap = new IniFile(path);
 			Dictionary<string, string> generalKeyPairs = beatmap.GetKeyValuesPair("General");
 			Dictionary<string, string> metadataKeyPairs = beatmap.GetKeyValuesPair("Metadata");
 			Dictionary<string, string> difficultyKeyPairs = beatmap.GetKeyValuesPair("Difficulty");
-			//read of the file as raw text
+			#endregion
+			#region read of the file as raw text
 			string rawBeatmap = File.ReadAllText(path);
 			//Istantiate the return object
 			BeatMap parsedMap = new BeatMap();
+			#endregion
 			//--------------------------------------------------------------
 			//Conversion of the values from ini to a dynamic object.
-			//General section
+			#region General
 			string value;
 			if (generalKeyPairs.TryGetValue("AudioFilename", out value))
 				parsedMap.FileName = value;
@@ -53,7 +55,8 @@ namespace OsuLoader {
 				parsedMap.Countdown = Convert.ToBoolean(value);
 			if (generalKeyPairs.TryGetValue("Mode", out value))
 				parsedMap.Mode = Convert.ToInt32(value);
-			//Metadata section
+			#endregion
+			#region Metadata
 			if (metadataKeyPairs.TryGetValue("Title", out value))
 				parsedMap.Title = value;
 			if (metadataKeyPairs.TryGetValue("TitleUnicode", out value))
@@ -68,13 +71,16 @@ namespace OsuLoader {
 				parsedMap.Version = value;
 			if (metadataKeyPairs.TryGetValue("Source", out value))
 				parsedMap.Source = value;
-			//Difficulty section
+			#endregion
+			#region Difficulty
 			if (difficultyKeyPairs.TryGetValue("HPDrainRate", out value))
 				parsedMap.HPDrainRate = Convert.ToSingle(value);
 			if (difficultyKeyPairs.TryGetValue("OverallDifficulty", out value))
 				parsedMap.OverallDifficulty = Convert.ToSingle(value);
+			#endregion
 			//--------------------------------------------------------------
 			//Conversion of the values from the raw text file
+			#region from raw text
 			//Subdivision of the string over sections
 			string[] partialBM = rawBeatmap.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 			//Recognize where timing points and hit objects are
@@ -102,7 +108,34 @@ namespace OsuLoader {
 				if (parsed.StartTime != 0)
 					parsedMap.LongNotes.Add(parsed);
 			}
+			#endregion
 			return parsedMap;
+		}
+
+		/// <summary>
+		/// Saves the BeatMap object as .osu file in the specified path
+		/// </summary>
+		/// <param name="path">File save path</param>
+		/// <param name="toWrite">Object to write</param>
+		public static void SaveDotOsu(string path, BeatMap toWrite) {
+			IniFile beatmap = new IniFile(path);
+			beatmap.WriteAllSection("General",
+				"AudioFilename: " + toWrite.FileName +
+				"\nAudioLeadin: " + toWrite.AudioLeadIn +
+				"\nPreviewTime: " + toWrite.PreviewTime +
+				"\nCountDown: " + toWrite.Countdown +
+				"\nMode: " + toWrite.Mode);
+			beatmap.WriteAllSection("Metadata",
+				"Title: " + toWrite.Title +
+				"\nTitleUnicode: " + toWrite.TitleUnicode +
+				"\nArtist: " + toWrite.Artist +
+				"\nArtistUnicode: " + toWrite.ArtistUnicode +
+				"\nCreator: " + toWrite.Creator +
+				"\nVersion: " + toWrite.Version +
+				"\nSource: " + toWrite.Source);
+			beatmap.WriteAllSection("Difficulty",
+				"HPDrainRate: " + toWrite.HPDrainRate +
+				"\nOverallDifficulty: " + toWrite.OverallDifficulty);
 		}
 
 		/// <summary>
