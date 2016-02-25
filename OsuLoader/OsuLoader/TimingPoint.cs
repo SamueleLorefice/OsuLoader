@@ -14,34 +14,36 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace OsuLoader
-{
-    /// <summary>
-    /// Timing point
-    /// </summary>
-    public struct TimingPoint
-    {
-        /// <summary>
-        /// Offset of the track timing (if inherithed is the distance from the last non inherithed timing point)
-        /// </summary>
-        public int Offset{get; set;}
-        /// <summary>
-        /// Time for each beat
-        /// </summary>
-        public float MilliSecondPerBeat{get; set;}
-        /// <summary>
-        /// Meter
-        /// </summary>
-        public int Meter{get; set;}
-        /// <summary>
-        /// Indicate whether this <see cref="OsuLoader.TimingPoint"/> is inherithed.
-        /// </summary>
-        /// <value><c>true</c> if inherithed; otherwise, <c>false</c>.</value>
-        public bool Inherithed{get; set;}
-        /// <summary>
-        /// Indicate whether this <see cref="OsuLoader.TimingPoint"/> is under kiai.
-        /// </summary>
-        /// <value><c>true</c> if kiai; otherwise, <c>false</c>.</value>
-        public bool Kiai{get; set;}
-    }
-}
+namespace OsuLoader {
+	/// <summary>
+	/// Timing point
+	/// </summary>
+	public struct TimingPoint {
+		/// <summary>
+		/// Offset of the track timing (if inherithed is the distance from the last non inherithed timing point)
+		/// </summary>
+		public int Offset { get; set; }
+
+		/// <summary>
+		/// Time for each beat
+		/// </summary>
+		public float MilliSecondPerBeat { get; set; }
+
+		/// <summary>
+		/// Meter
+		/// </summary>
+		public int Meter { get; set; }
+
+		/// <summary>
+		/// Indicate whether this TimingPoint is inherithed.
+		/// </summary>
+		/// <value><c>true</c> if inherithed; otherwise, <c>false</c>.</value>
+		public bool Inherithed { get; set; }
+
+		/// <summary>
+		/// Indicate whether this TimingPoint is under kiai.
+		/// </summary>
+		/// <value><c>true</c> if kiai; otherwise, <c>false</c>.</value>
+		public bool Kiai { get; set; }
+	}
+} 
