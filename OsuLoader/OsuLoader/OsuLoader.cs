@@ -136,6 +136,18 @@ namespace OsuLoader {
 			beatmap.WriteAllSection("Difficulty",
 				"HPDrainRate: " + toWrite.HPDrainRate +
 				"\nOverallDifficulty: " + toWrite.OverallDifficulty);
+			beatmap.WriteAllSection("TimingPoints", GetTimingPointString(toWrite.TimingPoints));
+			beatmap.WriteAllSection("HitObjects", GetHitObjectsString());
+		}
+
+		static string GetTimingPointString(List<TimingPoint> timings) {
+			string _out;
+			foreach (var tp in timings) {
+				_out += tp.Offset + "," + tp.MilliSecondPerBeat + "," + tp.Meter;
+				tp.Inherithed ? _out += "0," : _out += "1,";
+				tp.Kiai ? _out += "1" : _out += "0";
+				_out += "\n";
+			}
 		}
 
 		/// <summary>
@@ -166,6 +178,10 @@ namespace OsuLoader {
 				//return
 				return toReturn;
 			}
+		}
+
+		static string GetHitObjectsString() {
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
