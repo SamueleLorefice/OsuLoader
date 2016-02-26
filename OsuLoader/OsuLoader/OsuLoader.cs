@@ -138,17 +138,24 @@ namespace OsuLoader {
 				"HPDrainRate: " + toWrite.HPDrainRate +
 				"\nOverallDifficulty: " + toWrite.OverallDifficulty);
 			beatmap.WriteAllSection("TimingPoints", GetTimingPointString(toWrite.TimingPoints));
-			beatmap.WriteAllSection("HitObjects", GetHitObjectsString());
+			beatmap.WriteAllSection("HitObjects", GetHitObjectsString(toWrite.SingleNotes, toWrite.LongNotes));
 		}
 
 		static string GetTimingPointString(List<TimingPoint> timings) {
-			string _out;
+			string _out = "";
 			foreach (var tp in timings) {
 				_out += tp.Offset + "," + tp.MilliSecondPerBeat + "," + tp.Meter;
-				tp.Inherithed ? _out += "0," : _out += "1,";
-				tp.Kiai ? _out += "1" : _out += "0";
+				if (tp.Inherithed)
+					_out += "0,";
+				else
+					_out += "1,";
+				if (tp.Kiai)
+					_out += "1";
+				else
+					_out += "0";
 				_out += "\n";
 			}
+			return _out;
 		}
 
 		/// <summary>
@@ -181,7 +188,7 @@ namespace OsuLoader {
 		}
 
 		static string GetHitObjectsString(List<Note> sn, List<LongNote> ln) {
-			string _out;
+			string _out = "";
 			foreach (var note in sn) {
 				//x,y,time,type,hitSound,addition
 				switch (note.Column) {
@@ -224,6 +231,7 @@ namespace OsuLoader {
 				_out += note.EndTime;
 				_out += "0:0:0:0:\n";
 			}
+			return _out;
 		}
 
 		/// <summary>
