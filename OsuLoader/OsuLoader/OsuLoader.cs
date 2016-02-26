@@ -198,9 +198,31 @@ namespace OsuLoader {
 						_out += "448,";
 						break;
 				}
-				_out += "90,";
+				_out += "192,";
 				_out += note.Time + ",";
-				_out += "0,0:0:0:0:";
+				_out += "1,0,0:0:0:0:\n";
+			}
+			foreach (var note in ln) {
+				//x,  y, time,type,hitSound, end, addition (ln's in mania are saved as spinners)
+				switch (note.Column) {
+					case 0:
+						_out += "64,";
+						break;
+					case 1:
+						_out += "192,";
+						break;
+					case 2:
+						_out += "320,";
+						break;
+					case 3:
+						_out += "448,";
+						break;
+				}
+				_out += "192,";
+				_out += note.StartTime + ",";
+				_out += "128,0,";
+				_out += note.EndTime;
+				_out += "0:0:0:0:\n";
 			}
 		}
 
