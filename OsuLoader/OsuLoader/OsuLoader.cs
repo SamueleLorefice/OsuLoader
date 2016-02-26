@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Ini;
+using System.Collections;
 
 namespace OsuLoader {
 	/// <summary>
@@ -159,8 +160,7 @@ namespace OsuLoader {
 			string[] splitted = toParse.Split(new string[] { "," }, StringSplitOptions.None);
 			if (splitted.Length != 8) {
 				return new TimingPoint();
-			}
-			else {
+			} else {
 				TimingPoint toReturn = new TimingPoint();
 				toReturn.Offset = Convert.ToInt32(splitted[0]);
 				toReturn.MilliSecondPerBeat = Convert.ToSingle(splitted[1]);
@@ -180,8 +180,28 @@ namespace OsuLoader {
 			}
 		}
 
-		static string GetHitObjectsString() {
-			throw new NotImplementedException();
+		static string GetHitObjectsString(List<Note> sn, List<LongNote> ln) {
+			string _out;
+			foreach (var note in sn) {
+				//x,y,time,type,hitSound,addition
+				switch (note.Column) {
+					case 0:
+						_out += "64,";
+						break;
+					case 1:
+						_out += "192,";
+						break;
+					case 2:
+						_out += "320,";
+						break;
+					case 3:
+						_out += "448,";
+						break;
+				}
+				_out += "90,";
+				_out += note.Time + ",";
+				_out += "0,0:0:0:0:";
+			}
 		}
 
 		/// <summary>
@@ -193,8 +213,7 @@ namespace OsuLoader {
 			string[] splitted = toParse.Split(new string[] { "," }, StringSplitOptions.None);
 			if (splitted.Length != 6 || splitted[3] != "1") {
 				return new Note();
-			}
-			else {
+			} else {
 				//check if single note
 				Note toReturn = new Note();
 				//Detect the note column
@@ -229,8 +248,7 @@ namespace OsuLoader {
 			string[] splitted = toParse.Split(new string[] { "," }, StringSplitOptions.None);
 			if (splitted.Length != 6 || splitted[3] != "128") {
 				return new LongNote();
-			}
-			else {
+			} else {
 				LongNote toReturn = new LongNote();
 				//Detect the note column
 				switch (Convert.ToInt32(splitted[0])) {
