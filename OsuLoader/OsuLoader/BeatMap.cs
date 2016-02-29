@@ -44,9 +44,35 @@ namespace OsuLoader {
 		public bool Countdown { get; set; }
 
 		/// <summary>
-		/// The game mode this level is mapped to. 0 is Osu!, 1 Taiko, 2 CTB, 3 Mania
+		/// Specifies what is the default sampleset used.
+		/// </summary>
+		public string SampleSet { get; set; }
+
+		/// <summary>
+		/// Specifies how often closely placed hit objects will be stacked together.
+		/// </summary>
+		public float StackLeniency { get; set; }
+
+		/// <summary>
+		/// The game mode this level is mapped to. 0 is Osu!, 1 Taiko, 2 CTB, 3 Mania.
 		/// </summary>
 		public int Mode { get; set; }
+
+		/// <summary>
+		/// Specifies if the screen should use letterbox while in breaks.
+		/// </summary>
+		public bool LetterBoxInBreaks { get; set; }
+
+		/// <summary>
+		/// specifies whether or not the storyboard should be widescreen.
+		/// </summary>
+		public bool WideScreenStoryboard { get; set; }
+
+		#endregion
+
+		#region Editor
+
+		//coming soon...
 
 		#endregion
 
@@ -87,6 +113,21 @@ namespace OsuLoader {
 		/// </summary>
 		public string Source { get; set; }
 
+		///<summary>
+		/// Collection of tags separated by spaces.
+		/// </summary>
+		public string Tags { get; set; }
+
+		///<summary>
+		/// ID of the single beatmap.
+		/// </summary>
+		public int BeatmapID { get; set; }
+
+		///<summary>
+		/// ID of the beatmap set.
+		/// </summary>
+		public int BeatmapSetID { get; set; }
+
 		#endregion
 
 		#region Difficulty
@@ -96,10 +137,36 @@ namespace OsuLoader {
 		/// </summary>
 		public float HPDrainRate { get; set; }
 
+		///<summary>
+		/// Size of the hitobjects (CS)
+		/// </summary>
+		public float CircleSize { get; set; }
+
 		/// <summary>
-		/// Overall Difficulty (OD) of the difficulty
+		/// Size of the hit-window of this beatmap (OD)
 		/// </summary>
 		public float OverallDifficulty { get; set; }
+
+		/// <summary>
+		/// Specifies the amount of time taken for the approach circle and hit object to appear. (AR)
+		/// </summary>
+		public float ApproachRate { get; set; }
+
+		/// <summary>
+		/// Specifies a multiplier for the slider velocity. Default value is 1.4 .
+		/// </summary>
+		public float SliderMultiplier { get; set; }
+
+		/// <summary>
+		/// Specifies how often slider ticks appear. Default value is 1.
+		/// </summary>
+		public float SliderTickRate { get; set; }
+
+		#endregion
+
+		#region Events
+
+		//Coming soon...
 
 		#endregion
 
@@ -109,6 +176,12 @@ namespace OsuLoader {
 		/// List of all timing points
 		/// </summary>
 		public List<TimingPoint> TimingPoints { get; set; }
+
+		#endregion
+
+		#region Colours
+
+		//Coming soon...
 
 		#endregion
 

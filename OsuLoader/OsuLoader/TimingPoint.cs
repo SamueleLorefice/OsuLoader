@@ -13,6 +13,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using System.Configuration;
 
 namespace OsuLoader {
 	/// <summary>
@@ -33,6 +34,21 @@ namespace OsuLoader {
 		/// Meter
 		/// </summary>
 		public int Meter { get; set; }
+
+		/// <summary>
+		/// Define the sample type
+		/// </summary>
+		public int SampleType { get; set; }
+
+		/// <summary>
+		/// Define the sample set
+		/// </summary>
+		public int SampleSet { get; set; }
+
+		/// <summary>
+		/// Define the samples volume
+		/// </summary>
+		public int Volume { get; set; }
 
 		/// <summary>
 		/// Indicate whether this TimingPoint is inherithed.
