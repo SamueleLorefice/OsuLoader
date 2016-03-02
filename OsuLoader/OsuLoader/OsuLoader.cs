@@ -49,16 +49,24 @@ namespace OsuLoader {
 			if (generalKeyPairs.TryGetValue("AudioFilename", out value))
 				parsedMap.FileName = value;
 			if (generalKeyPairs.TryGetValue("AudioLeadIn", out value))
-				parsedMap.AudioLeadIn = Convert.ToInt32(value);
+				parsedMap.AudioLeadIn = int.Parse(value);
 			if (generalKeyPairs.TryGetValue("PreviewTime", out value))
-				parsedMap.PreviewTime = Convert.ToInt32(value);
+				parsedMap.PreviewTime = int.Parse(value);
 			if (generalKeyPairs.TryGetValue("CountDown", out value))
-				parsedMap.Countdown = Convert.ToBoolean(value);
-			if (generalKeyPairs.TryGetValue("Mode", out value))
-				parsedMap.Mode = Convert.ToInt32(value);
-			#endregion
-			#region Metadata
-			if (metadataKeyPairs.TryGetValue("Title", out value))
+				parsedMap.Countdown = bool.Parse(value);
+            if (generalKeyPairs.TryGetValue("SampleSet", out value))
+                parsedMap.SampleSet = value;
+            if (generalKeyPairs.TryGetValue("StackLeniency", out value))
+                parsedMap.StackLeniency = float.Parse(value);
+            if (generalKeyPairs.TryGetValue("Mode", out value))
+				parsedMap.Mode = int.Parse(value);
+            if (generalKeyPairs.TryGetValue("LetterBoxInBreaks", out value))
+                parsedMap.LetterBoxInBreaks = bool.Parse(value);
+            if (generalKeyPairs.TryGetValue("WideScreenStoryboard", out value))
+                parsedMap.WideScreenStoryboard = bool.Parse(value);
+            #endregion
+            #region Metadata
+            if (metadataKeyPairs.TryGetValue("Title", out value))
 				parsedMap.Title = value;
 			if (metadataKeyPairs.TryGetValue("TitleUnicode", out value))
 				parsedMap.TitleUnicode = value;
@@ -72,18 +80,33 @@ namespace OsuLoader {
 				parsedMap.Version = value;
 			if (metadataKeyPairs.TryGetValue("Source", out value))
 				parsedMap.Source = value;
-			#endregion
-			#region Difficulty
-			if (difficultyKeyPairs.TryGetValue("HPDrainRate", out value))
-				parsedMap.HPDrainRate = Convert.ToSingle(value);
-			if (difficultyKeyPairs.TryGetValue("OverallDifficulty", out value))
-				parsedMap.OverallDifficulty = Convert.ToSingle(value);
-			#endregion
-			//--------------------------------------------------------------
-			//Conversion of the values from the raw text file
-			#region from raw text
-			//Subdivision of the string over sections
-			string[] partialBM = rawBeatmap.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            if (metadataKeyPairs.TryGetValue("Tags", out value))
+                parsedMap.Tags = value;
+            if (metadataKeyPairs.TryGetValue("BeatmapID", out value))
+                parsedMap.BeatmapID = int.Parse(value);
+            if (metadataKeyPairs.TryGetValue("BeatmapSetID", out value))
+                parsedMap.BeatmapSetID = int.Parse(value);
+
+            #endregion
+            #region Difficulty
+            if (difficultyKeyPairs.TryGetValue("HPDrainRate", out value))
+				parsedMap.HPDrainRate = float.Parse(value);
+            if (difficultyKeyPairs.TryGetValue("CircleSize", out value))
+                parsedMap.CircleSize = float.Parse(value);
+            if (difficultyKeyPairs.TryGetValue("OverallDifficulty", out value))
+				parsedMap.OverallDifficulty = float.Parse(value);
+            if (difficultyKeyPairs.TryGetValue("ApproachRate", out value))
+                parsedMap.ApproachRate = float.Parse(value);
+            if (difficultyKeyPairs.TryGetValue("SliderMultiplier", out value))
+                parsedMap.SliderMultiplier = float.Parse(value);
+            if (difficultyKeyPairs.TryGetValue("SliderTickRate", out value))
+                parsedMap.SliderTickRate = float.Parse(value);
+            #endregion
+            //--------------------------------------------------------------
+            //Conversion of the values from the raw text file
+            #region from raw text
+            //Subdivision of the string over sections
+            string[] partialBM = rawBeatmap.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 			//Recognize where timing points and hit objects are
 			int timingIndex = Array.IndexOf(partialBM, "[TimingPoints]");
 			int hitIndex = Array.IndexOf(partialBM, "[HitObjects]");
@@ -169,16 +192,16 @@ namespace OsuLoader {
 				return new TimingPoint();
 			} else {
 				TimingPoint toReturn = new TimingPoint();
-				toReturn.Offset = Convert.ToInt32(splitted[0]);
-				toReturn.MilliSecondPerBeat = Convert.ToSingle(splitted[1]);
-				toReturn.Meter = Convert.ToInt32(splitted[2]);
+				toReturn.Offset = int.Parse(splitted[0]);
+				toReturn.MilliSecondPerBeat = float.Parse(splitted[1]);
+				toReturn.Meter = int.Parse(splitted[2]);
 				//inherited check
-				if (Convert.ToInt32(splitted[6]) == 0)
+				if (int.Parse(splitted[6]) == 0)
 					toReturn.Inherithed = true;
 				else
 					toReturn.Inherithed = false;
 				//kiai check
-				if (Convert.ToInt32(splitted[7]) == 0)
+				if (int.Parse(splitted[7]) == 0)
 					toReturn.Kiai = false;
 				else
 					toReturn.Kiai = true;
@@ -247,7 +270,7 @@ namespace OsuLoader {
 				//check if single note
 				Note toReturn = new Note();
 				//Detect the note column
-				switch (Convert.ToInt32(splitted[0])) {
+				switch (int.Parse(splitted[0])) {
 					case 64:
 						toReturn.Column = 0;
 						break;
@@ -264,7 +287,7 @@ namespace OsuLoader {
 						return new Note();
 				}
 				//detect time
-				toReturn.Time = Convert.ToInt32(splitted[2]);
+				toReturn.Time = int.Parse(splitted[2]);
 				return toReturn;
 			}
 		}
@@ -281,7 +304,7 @@ namespace OsuLoader {
 			} else {
 				LongNote toReturn = new LongNote();
 				//Detect the note column
-				switch (Convert.ToInt32(splitted[0])) {
+				switch (int.Parse(splitted[0])) {
 					case 64:
 						toReturn.Column = 0;
 						break;
@@ -298,9 +321,9 @@ namespace OsuLoader {
 						return new LongNote();
 				}
 				//detect time
-				toReturn.StartTime = Convert.ToInt32(splitted[2]);
+				toReturn.StartTime = int.Parse(splitted[2]);
 				string[] endCode = splitted[5].Split(new string[] { ":" }, StringSplitOptions.None);
-				toReturn.EndTime = Convert.ToInt32(endCode[0]);
+				toReturn.EndTime = int.Parse(endCode[0]);
 				return toReturn;
 			}
 		}
