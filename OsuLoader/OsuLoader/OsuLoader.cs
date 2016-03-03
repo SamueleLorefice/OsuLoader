@@ -35,7 +35,8 @@ namespace OsuLoader {
 			IniFile beatmap = new IniFile(path);
 			Dictionary<string, string> generalKeyPairs = beatmap.GetKeyValuesPair("General");
 			Dictionary<string, string> metadataKeyPairs = beatmap.GetKeyValuesPair("Metadata");
-			Dictionary<string, string> difficultyKeyPairs = beatmap.GetKeyValuesPair("Difficulty");
+            Dictionary<string, string> difficultyKeyPairs = beatmap.GetKeyValuesPair("Difficulty");
+            Dictionary<string, string> coloursKeyPairs = beatmap.GetKeyValuesPair("Colours");
 			#endregion
 			#region read of the file as raw text
 			string rawBeatmap = File.ReadAllText(path);
@@ -101,6 +102,21 @@ namespace OsuLoader {
                 parsedMap.SliderMultiplier = float.Parse(value);
             if (difficultyKeyPairs.TryGetValue("SliderTickRate", out value))
                 parsedMap.SliderTickRate = float.Parse(value);
+            #endregion
+            #region Colours
+            parsedMap.Colours = new List<BeatMap.colour>();
+            for (int i = 0; i < coloursKeyPairs.Count; i++)
+            {
+                string[] SplittedRGB = new string[3];
+                string ComboN = Convert.ToString(i + 1);
+
+                if (coloursKeyPairs.TryGetValue("Combo" + ComboN + " ", out value))
+                {
+                    SplittedRGB = value.Split(',');
+                    SplittedRGB[0] = SplittedRGB[0].Trim();
+                    parsedMap.Colours.Add(new BeatMap.colour(int.Parse(SplittedRGB[0]), int.Parse(SplittedRGB[1]), int.Parse(SplittedRGB[2])));
+                }
+            }
             #endregion
             //--------------------------------------------------------------
             //Conversion of the values from the raw text file

@@ -180,9 +180,18 @@ namespace OsuLoader {
 		#endregion
 
 		#region Colours
-
-		//Coming soon...
-
+        public struct colour
+        {
+            int Red, Green, Blue;
+            public colour(int r, int g, int b)
+            {
+                Red = r;
+                Green = g;
+                Blue = b;
+            }
+        }
+        public List<colour> Colours { get; set; }
+        
 		#endregion
 
 		#region Hit Objects
