@@ -16,188 +16,200 @@
 
 using System.Collections.Generic;
 
-namespace OsuLoader {
-	/// <summary>
-	/// Represent all the data from a .osu file (use osu loader to initzialize this object.)
-	/// </summary>
-	public class BeatMap {
-		#region General
+namespace OsuLoader
+{
+    public struct colour
+    {
+        public int Red, Green, Blue;
+        public colour(int r, int g, int b)
+        {
+            Red = r;
+            Green = g;
+            Blue = b;
+        }
+    }
+    /// <summary>
+    /// Represent all the data from a .osu file (use osu loader to initzialize this object.)
+    /// </summary>
+    public class BeatMap
+    {
+        #region General
 
-		/// <summary>
-		/// The name of the file mp3.
-		/// </summary>
-		public string FileName { get; set; }
+        /// <summary>
+        /// The name of the file mp3.
+        /// </summary>
+        public string FileName { get; set; }
 
-		/// <summary>
-		/// The time before the actual track start to play. (in milliseconds)
-		/// </summary>
-		public int AudioLeadIn { get; set; }
+        /// <summary>
+        /// The time before the actual track start to play. (in milliseconds)
+        /// </summary>
+        public int AudioLeadIn { get; set; }
 
-		/// <summary>
-		/// The preview time. (the millisecond where the track starts to play in the menù when selected)
-		/// </summary>
-		public int PreviewTime { get; set; }
+        /// <summary>
+        /// The preview time. (the millisecond where the track starts to play in the menù when selected)
+        /// </summary>
+        public int PreviewTime { get; set; }
 
-		/// <summary>
-		/// Specifies if there is a count down at the beginning of the level.
-		/// </summary>
-		public bool Countdown { get; set; }
+        /// <summary>
+        /// Specifies if there is a count down at the beginning of the level.
+        /// </summary>
+        public bool Countdown { get; set; }
 
-		/// <summary>
-		/// Specifies what is the default sampleset used.
-		/// </summary>
-		public string SampleSet { get; set; }
+        /// <summary>
+        /// Specifies what is the default sampleset used.
+        /// </summary>
+        public string SampleSet { get; set; }
 
-		/// <summary>
-		/// Specifies how often closely placed hit objects will be stacked together.
-		/// </summary>
-		public float StackLeniency { get; set; }
+        /// <summary>
+        /// Specifies how often closely placed hit objects will be stacked together.
+        /// </summary>
+        public float StackLeniency { get; set; }
 
-		/// <summary>
-		/// The game mode this level is mapped to. 0 is Osu!, 1 Taiko, 2 CTB, 3 Mania.
-		/// </summary>
-		public int Mode { get; set; }
+        /// <summary>
+        /// The game mode this level is mapped to. 0 is Osu!, 1 Taiko, 2 CTB, 3 Mania.
+        /// </summary>
+        public int Mode { get; set; }
 
-		/// <summary>
-		/// Specifies if the screen should use letterbox while in breaks.
-		/// </summary>
-		public bool LetterBoxInBreaks { get; set; }
+        /// <summary>
+        /// Specifies if the screen should use letterbox while in breaks.
+        /// </summary>
+        public bool LetterBoxInBreaks { get; set; }
 
-		/// <summary>
-		/// specifies whether or not the storyboard should be widescreen.
-		/// </summary>
-		public bool WideScreenStoryboard { get; set; }
+        /// <summary>
+        /// specifies whether or not the storyboard should be widescreen.
+        /// </summary>
+        public bool WideScreenStoryboard { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Editor
+        #region Editor
 
-		//coming soon...
+        //coming soon...
 
-		#endregion
+        #endregion
 
-		#region Metadata
+        #region Metadata
 
-		/// <summary>
-		/// Romanised title of the track
-		/// </summary>
-		public string Title { get; set; }
+        /// <summary>
+        /// Romanised title of the track
+        /// </summary>
+        public string Title { get; set; }
 
-		/// <summary>
-		/// Unicode Title (Original title as referred in the beatmap editor)
-		/// </summary>
-		public string TitleUnicode { get; set; }
+        /// <summary>
+        /// Unicode Title (Original title as referred in the beatmap editor)
+        /// </summary>
+        public string TitleUnicode { get; set; }
 
-		/// <summary>
-		/// Romanised artist name
-		/// </summary>
-		public string Artist { get; set; }
+        /// <summary>
+        /// Romanised artist name
+        /// </summary>
+        public string Artist { get; set; }
 
-		/// <summary>
-		/// Unicode artist title (Original artist name as referred in the beatmap editor)
-		/// </summary>
-		public string ArtistUnicode { get; set; }
+        /// <summary>
+        /// Unicode artist title (Original artist name as referred in the beatmap editor)
+        /// </summary>
+        public string ArtistUnicode { get; set; }
 
-		/// <summary>
-		/// Username of the mapper
-		/// </summary>
-		public string Creator { get; set; }
+        /// <summary>
+        /// Username of the mapper
+        /// </summary>
+        public string Creator { get; set; }
 
-		/// <summary>
-		/// Difficulty name
-		/// </summary>
-		public string Version { get; set; }
+        /// <summary>
+        /// Difficulty name
+        /// </summary>
+        public string Version { get; set; }
 
-		/// <summary>
-		/// Source of the BeatMap
-		/// </summary>
-		public string Source { get; set; }
+        /// <summary>
+        /// Source of the BeatMap
+        /// </summary>
+        public string Source { get; set; }
 
-		///<summary>
-		/// Collection of tags separated by spaces.
-		/// </summary>
-		public string Tags { get; set; }
+        ///<summary>
+        /// Collection of tags separated by spaces.
+        /// </summary>
+        public string Tags { get; set; }
 
-		///<summary>
-		/// ID of the single beatmap.
-		/// </summary>
-		public int BeatmapID { get; set; }
+        ///<summary>
+        /// ID of the single beatmap.
+        /// </summary>
+        public int BeatmapID { get; set; }
 
-		///<summary>
-		/// ID of the beatmap set.
-		/// </summary>
-		public int BeatmapSetID { get; set; }
+        ///<summary>
+        /// ID of the beatmap set.
+        /// </summary>
+        public int BeatmapSetID { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Difficulty
+        #region Difficulty
 
-		/// <summary>
-		/// HP drain rate of the difficulty
-		/// </summary>
-		public float HPDrainRate { get; set; }
+        /// <summary>
+        /// HP drain rate of the difficulty
+        /// </summary>
+        public float HPDrainRate { get; set; }
 
-		///<summary>
-		/// Size of the hitobjects (CS)
-		/// </summary>
-		public float CircleSize { get; set; }
+        ///<summary>
+        /// Size of the hitobjects (CS)
+        /// </summary>
+        public float CircleSize { get; set; }
 
-		/// <summary>
-		/// Size of the hit-window of this beatmap (OD)
-		/// </summary>
-		public float OverallDifficulty { get; set; }
+        /// <summary>
+        /// Size of the hit-window of this beatmap (OD)
+        /// </summary>
+        public float OverallDifficulty { get; set; }
 
-		/// <summary>
-		/// Specifies the amount of time taken for the approach circle and hit object to appear. (AR)
-		/// </summary>
-		public float ApproachRate { get; set; }
+        /// <summary>
+        /// Specifies the amount of time taken for the approach circle and hit object to appear. (AR)
+        /// </summary>
+        public float ApproachRate { get; set; }
 
-		/// <summary>
-		/// Specifies a multiplier for the slider velocity. Default value is 1.4 .
-		/// </summary>
-		public float SliderMultiplier { get; set; }
+        /// <summary>
+        /// Specifies a multiplier for the slider velocity. Default value is 1.4 .
+        /// </summary>
+        public float SliderMultiplier { get; set; }
 
-		/// <summary>
-		/// Specifies how often slider ticks appear. Default value is 1.
-		/// </summary>
-		public float SliderTickRate { get; set; }
+        /// <summary>
+        /// Specifies how often slider ticks appear. Default value is 1.
+        /// </summary>
+        public float SliderTickRate { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Events
+        #region Events
 
-		//Coming soon...
+        //Coming soon...
 
-		#endregion
+        #endregion
 
-		#region Timing Points
+        #region Timing Points
 
-		/// <summary>
-		/// List of all timing points
-		/// </summary>
-		public List<TimingPoint> TimingPoints { get; set; }
+        /// <summary>
+        /// List of all timing points
+        /// </summary>
+        public List<TimingPoint> TimingPoints { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Colours
+        #region Colours
 
-		//Coming soon...
+        public List<colour> Colours { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Hit Objects
+        #region Hit Objects
 
-		/// <summary>
-		/// List of the single notes (non-hold notes)
-		/// </summary>
-		public List<Note> SingleNotes { get; set; }
+        /// <summary>
+        /// List of the single notes (non-hold notes)
+        /// </summary>
+        public List<Note> SingleNotes { get; set; }
 
-		/// <summary>
-		/// List of hold notes (sliders)
-		/// </summary>
-		public List<LongNote> LongNotes { get; set; }
+        /// <summary>
+        /// List of hold notes (sliders)
+        /// </summary>
+        public List<LongNote> LongNotes { get; set; }
 
-		#endregion
-	}
-    
+        #endregion
+    }
+
 }
