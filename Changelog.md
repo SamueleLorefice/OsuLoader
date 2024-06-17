@@ -36,6 +36,9 @@ All notable changes to this project will be documented in this file.
 - Standardized naming all around the main class code
 - [**breaking**] Marked current load and save methods as obsolete due to them using P/Invoke API available only on windows.
 - [**breaking**] Added a dependency to Microsoft.Extensions.Configuration.Ini for a more portable Ini parsing system that doesn't rely too much on WinAPI
+- Moved enums to a separate file to declutter the BeatMap.cs file.
+- Moved IEvent related structs to their own file.
+- Moved color struct to it's own file.
 
 ### 📚 Documentation
 

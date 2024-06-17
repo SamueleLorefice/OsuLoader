@@ -19,91 +19,8 @@ using System.Collections.Generic;
 
 namespace OsuLoader
 {
-    public struct Color
-    {
-        public int R, G, B;
-        public Color(int r, int g, int b)
-        {
-            R = r;
-            G = g;
-            B = b;
-        }
-    }
-    
-    public enum CountdownType
-    {
-        None = 0,
-        Normal = 1,
-        Half = 2,
-        Double = 3
-    }
-    
-    public enum GameMode
-    {
-        Osu = 0,
-        Taiko = 1,
-        CatchTheBeat = 2,
-        Mania = 3
-    }
-    
-    public enum OverlayPosition
-    {
-        NoChange = 0,
-        Below = 1,
-        Above = 2
-    }
-    
-    public enum EventType
-    {
-        Background = 0,
-        Video = 1,
-        Break = 2,
-        Sprite,
-        Animation
-    }
-    
-    public interface IEvent {
-        public EventType GetEventType();
-    }
-    
     /// <summary>
-    /// Holds Background Event Data
-    /// </summary>
-    public struct BackgroundEvent : IEvent
-    {
-        public EventType GetEventType() => EventType.Background;
-        public int StartTime;
-        public string Filename; 
-        public int XOffset;
-        public int YOffset;
-    }
-
-    public struct VideoEvent : IEvent
-    {
-        public EventType GetEventType() => EventType.Video;
-        public int StartTime;
-        public string Filename;
-        public int XOffset;
-        public int YOffset;
-    }
-    
-    public struct BreakEvent : IEvent
-    {
-        public EventType GetEventType() => EventType.Break;
-        public int StartTime;
-        public int EndTime;
-    }
-    
-    [Flags]
-    public enum TimingEffect
-    {
-        None = 0,
-        Kiai = 1,
-        OmitFirstBarLine = 2 
-    }
-    
-    /// <summary>
-    /// Represent all the data from a .osu file (use osu loader to initzialize this object.)
+    /// Represent all the data from a .osu file (use osu loader to initialize this object.)
     /// </summary>
     public class BeatMap
     {
@@ -363,5 +280,4 @@ namespace OsuLoader
 
         #endregion
     }
-
 }
