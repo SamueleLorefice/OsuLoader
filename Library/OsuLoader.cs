@@ -51,7 +51,7 @@ namespace OsuLoader
             #region General
             string value;
             if (generalKeyPairs.TryGetValue("AudioFilename", out value))
-                parsedMap.FileName = value;
+                parsedMap.AudioFileName = value;
             if (generalKeyPairs.TryGetValue("AudioLeadIn", out value))
                 parsedMap.AudioLeadIn = int.Parse(value);
             if (generalKeyPairs.TryGetValue("PreviewTime", out value))
@@ -167,7 +167,7 @@ namespace OsuLoader
         {
             IniFile beatmap = new IniFile(path);
             beatmap.WriteAllSection("General",
-                "AudioFilename: " + toWrite.FileName +
+                "AudioFilename: " + toWrite.AudioFileName +
                 "\r\nAudioLeadin: " + toWrite.AudioLeadIn +
                 "\r\nPreviewTime: " + toWrite.PreviewTime +
                 "\r\nCountDown: " + toWrite.Countdown +

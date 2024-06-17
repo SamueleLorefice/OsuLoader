@@ -38,7 +38,7 @@ namespace OsuLoader
         /// <summary>
         /// The name of the file mp3.
         /// </summary>
-        public string FileName { get; set; }
+        public string AudioFileName { get; set; }
 
         /// <summary>
         /// The time before the actual track start to play. (in milliseconds)
@@ -76,16 +76,24 @@ namespace OsuLoader
         public bool LetterBoxInBreaks { get; set; }
 
         /// <summary>
-        /// specifies whether or not the storyboard should be widescreen.
+        /// specifies whether the storyboard should be widescreen.
         /// </summary>
         public bool WideScreenStoryboard { get; set; }
-
+        
+        /// <summary>
+        /// Epilepsy warning
+        /// </summary>
+        public bool EpilepsyWarning { get; set; }
+        
         #endregion
 
         #region Editor
 
         //coming soon...
-
+        public float DistanceSpacing { get; set; }
+        public int BeatDivisor { get; set; }
+        public int GridSize { get; set; }
+        
         #endregion
 
         #region Metadata
