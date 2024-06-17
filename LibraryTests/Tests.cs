@@ -93,5 +93,17 @@ namespace LibraryTests
         {
             Assert.Inconclusive("Not yet implemented");
         }
+        
+        [Test]
+        public void ColoursSectionTest()
+        {
+            Assert.Inconclusive("Not yet implemented");
+        }
+        
+        [Test]
+        public void HitObjectsSectionTest()
+        {
+            Assert.Inconclusive("Not yet implemented");
+        }
     }
 }
