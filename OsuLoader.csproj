@@ -7,6 +7,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>OsuLoader</RootNamespace>
     <AssemblyName>OsuLoader</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>default</LangVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,8 +35,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OsuLoader\Ini\IniFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Ini\IniFile.cs" />
     <Compile Include="OsuLoader\BeatMap.cs" />
     <Compile Include="OsuLoader\LongNote.cs" />
     <Compile Include="OsuLoader\Note.cs" />
@@ -41,8 +44,4 @@
     <Compile Include="OsuLoader\TimingPoint.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Ini\" />
-    <Folder Include="OsuLoader\" />
-  </ItemGroup>
 </Project>
