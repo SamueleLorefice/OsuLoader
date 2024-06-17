@@ -14,6 +14,9 @@ All notable changes to this project will be documented in this file.
 - *(project)* Removed root dir duplication
 - *(project)* Updated project to .Net Framework 4.8
 - *(project)* Cleaned up imports in csproj
+- Updated gitignore
+- Rearranged lib project files to a Library project.
+- Renamed lib project to OsuLoaderLib
 
 ### 📚 Documentation
 
