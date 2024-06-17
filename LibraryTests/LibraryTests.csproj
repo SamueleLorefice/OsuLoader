@@ -54,7 +54,9 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Tests.cs" />
+        <Compile Include="BeatmapTest.cs" />
+        <Compile Include="NewMethodsTest.cs" />
+        <Compile Include="OldMethodsTests.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

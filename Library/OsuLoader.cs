@@ -160,6 +160,30 @@ namespace OsuLoader
             #endregion
             return parsedMap;
         }
+        
+        /// <summary>
+        /// Get a BeatMap object from a .osu file
+        /// </summary>
+        /// <param name="fileString">The .osu file as a string</param>
+        /// <returns>The BeatMap object</returns>
+        /// <remarks>Note that this version requires that you load the osu file from the filesystem.</remarks>
+        public static BeatMap GetBeatMap(string fileString)
+        {
+            
+            return null;
+        }
+        
+        /// <summary>
+        /// Get a BeatMap object from a .osu file
+        /// </summary>
+        /// <param name="path">The path to the .osu file</param>
+        /// <returns>The BeatMap object</returns>
+        /// <remarks>This version, unlike the other, loads the osu file from the filesystem using a ReadAllText method.</remarks>
+        public static BeatMap GetBeatMapFromFile(string path)
+        {
+            string fileString = File.ReadAllText(path);
+            return GetBeatMap(fileString);
+        }
 
         /// <summary>
         /// Saves the BeatMap object as .osu file in the specified path
