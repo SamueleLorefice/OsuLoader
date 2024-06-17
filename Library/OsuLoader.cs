@@ -19,6 +19,9 @@ using System.Collections.Generic;
 using System.IO;
 using Ini;
 using System.Collections;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using Microsoft.Extensions.Configuration.Ini;
 
 namespace OsuLoader
@@ -60,13 +63,13 @@ namespace OsuLoader
             if (generalKeyPairs.TryGetValue("PreviewTime", out value))
                 parsedMap.PreviewTime = int.Parse(value);
             if (generalKeyPairs.TryGetValue("CountDown", out value))
-                parsedMap.Countdown = bool.Parse(value);
+                parsedMap.Countdown = (CountdownType)int.Parse(value);
             if (generalKeyPairs.TryGetValue("SampleSet", out value))
                 parsedMap.SampleSet = value;
             if (generalKeyPairs.TryGetValue("StackLeniency", out value))
                 parsedMap.StackLeniency = float.Parse(value);
             if (generalKeyPairs.TryGetValue("Mode", out value))
-                parsedMap.Mode = int.Parse(value);
+                parsedMap.Mode = (GameMode)int.Parse(value);
             if (generalKeyPairs.TryGetValue("LetterBoxInBreaks", out value))
                 parsedMap.LetterBoxInBreaks = bool.Parse(value);
             if (generalKeyPairs.TryGetValue("WideScreenStoryboard", out value))
@@ -88,16 +91,16 @@ namespace OsuLoader
             if (metadataKeyPairs.TryGetValue("Source", out value))
                 parsedMap.Source = value;
             if (metadataKeyPairs.TryGetValue("Tags", out value))
-                parsedMap.Tags = value;
+                parsedMap.Tags = value.Split(' ').ToList();
             if (metadataKeyPairs.TryGetValue("BeatmapID", out value))
-                parsedMap.BeatmapID = int.Parse(value);
+                parsedMap.BeatmapId = int.Parse(value);
             if (metadataKeyPairs.TryGetValue("BeatmapSetID", out value))
-                parsedMap.BeatmapSetID = int.Parse(value);
+                parsedMap.BeatmapSetId = int.Parse(value);
 
             #endregion
             #region Difficulty
             if (difficultyKeyPairs.TryGetValue("HPDrainRate", out value))
-                parsedMap.HPDrainRate = float.Parse(value);
+                parsedMap.HpDrainRate = float.Parse(value);
             if (difficultyKeyPairs.TryGetValue("CircleSize", out value))
                 parsedMap.CircleSize = float.Parse(value);
             if (difficultyKeyPairs.TryGetValue("OverallDifficulty", out value))
@@ -110,7 +113,7 @@ namespace OsuLoader
                 parsedMap.SliderTickRate = float.Parse(value);
             #endregion
             #region Colours
-            parsedMap.Colours = new List<colour>();
+            parsedMap.Colours = new List<Tuple<string, Color>>();
             for (int i = 0; i < coloursKeyPairs.Count; i++)
             {
                 string[] splitRgb = new string[3];
@@ -120,7 +123,15 @@ namespace OsuLoader
                 {
                     splitRgb = value.Split(',');
                     splitRgb[0] = splitRgb[0].Trim();
-                    parsedMap.Colours.Add(new colour(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2])));
+                    parsedMap.Colours.Add(new Tuple<string, Color>($"Combo{comboN}", new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
+                }else if (coloursKeyPairs.TryGetValue("SliderTrackOverride", out value)){
+                    splitRgb = value.Split(',');
+                    splitRgb[0] = splitRgb[0].Trim();
+                    parsedMap.Colours.Add(new Tuple<string, Color>("SliderTrackOverride", new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
+                }else if (coloursKeyPairs.TryGetValue("SliderBorder", out value)){
+                    splitRgb = value.Split(',');
+                    splitRgb[0] = splitRgb[0].Trim();
+                    parsedMap.Colours.Add(new Tuple<string, Color>("SliderBorder", new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
                 }
             }
             #endregion
@@ -213,10 +224,10 @@ namespace OsuLoader
                 "\r\nVersion: " + toWrite.Version +
                 "\r\nSource: " + toWrite.Source +
                 "\r\nTags: " + toWrite.Tags +
-                "\r\nBeatmapID: " + toWrite.BeatmapID +
-                "\r\nBeatmapSetID: " + toWrite.BeatmapSetID);
+                "\r\nBeatmapID: " + toWrite.BeatmapId +
+                "\r\nBeatmapSetID: " + toWrite.BeatmapSetId);
             beatmap.WriteAllSection("Difficulty",
-                "HPDrainRate: " + toWrite.HPDrainRate +
+                "HPDrainRate: " + toWrite.HpDrainRate +
                 "\r\nCircleSize: " + toWrite.CircleSize +
                 "\r\nOverallDifficulty: " + toWrite.OverallDifficulty +
                 "\r\nApproachRate: " + toWrite.ApproachRate +
@@ -231,9 +242,9 @@ namespace OsuLoader
         {
             string coloursToSave = null;
             int number = 1;
-            foreach (colour rgb in toWrite.Colours)
+            foreach (Tuple<string, Color> rgb in toWrite.Colours)
             {
-                coloursToSave += "Combo" + number + " : " + rgb.Red + ',' + rgb.Green + ',' + rgb.Blue + "\r\n";
+                coloursToSave += $"{rgb.Item1} : {rgb.Item2.R},{rgb.Item2.G},{rgb.Item2.B}\r\n";
                 number++;
             }
             return coloursToSave;
@@ -245,14 +256,16 @@ namespace OsuLoader
             foreach (var tp in timings)
             {
                 timingStr += tp.Offset + "," + tp.MilliSecondPerBeat + "," + tp.Meter;
-                if (tp.Inherithed)
+                if (tp.Uninherited)
                     timingStr += "0,";
                 else
                     timingStr += "1,";
-                if (tp.Kiai)
+                
+                if (tp.Effects.HasFlag(TimingEffect.Kiai))
                     timingStr += "1";
                 else
                     timingStr += "0";
+                
                 timingStr += "\r\n";
             }
             return timingStr;
@@ -277,9 +290,9 @@ namespace OsuLoader
                     MilliSecondPerBeat = float.Parse(split[1]),
                     Meter = int.Parse(split[2]),
                     //inherited check
-                    Inherithed = int.Parse(split[6]) == 0,
+                    Uninherited = int.Parse(split[6]) == 0,
                     //kiai check
-                    Kiai = int.Parse(split[7]) != 0
+                    Effects = int.Parse(split[7]) == 1 ? TimingEffect.Kiai : TimingEffect.None
                 };
                 //return
                 return toReturn;

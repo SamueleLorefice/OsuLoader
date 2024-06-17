@@ -14,20 +14,94 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 
 namespace OsuLoader
 {
-    public struct colour
+    public struct Color
     {
-        public int Red, Green, Blue;
-        public colour(int r, int g, int b)
+        public int R, G, B;
+        public Color(int r, int g, int b)
         {
-            Red = r;
-            Green = g;
-            Blue = b;
+            R = r;
+            G = g;
+            B = b;
         }
     }
+    
+    public enum CountdownType
+    {
+        None = 0,
+        Normal = 1,
+        Half = 2,
+        Double = 3
+    }
+    
+    public enum GameMode
+    {
+        Osu = 0,
+        Taiko = 1,
+        CatchTheBeat = 2,
+        Mania = 3
+    }
+    
+    public enum OverlayPosition
+    {
+        NoChange = 0,
+        Below = 1,
+        Above = 2
+    }
+    
+    public enum EventType
+    {
+        Background = 0,
+        Video = 1,
+        Break = 2,
+        Sprite,
+        Animation
+    }
+    
+    public interface IEvent {
+        public EventType GetEventType();
+    }
+    
+    /// <summary>
+    /// Holds Background Event Data
+    /// </summary>
+    public struct BackgroundEvent : IEvent
+    {
+        public EventType GetEventType() => EventType.Background;
+        public int StartTime;
+        public string Filename; 
+        public int XOffset;
+        public int YOffset;
+    }
+
+    public struct VideoEvent : IEvent
+    {
+        public EventType GetEventType() => EventType.Video;
+        public int StartTime;
+        public string Filename;
+        public int XOffset;
+        public int YOffset;
+    }
+    
+    public struct BreakEvent : IEvent
+    {
+        public EventType GetEventType() => EventType.Break;
+        public int StartTime;
+        public int EndTime;
+    }
+    
+    [Flags]
+    public enum TimingEffect
+    {
+        None = 0,
+        Kiai = 1,
+        OmitFirstBarLine = 2 
+    }
+    
     /// <summary>
     /// Represent all the data from a .osu file (use osu loader to initzialize this object.)
     /// </summary>
@@ -43,56 +117,120 @@ namespace OsuLoader
         /// <summary>
         /// The time before the actual track start to play. (in milliseconds)
         /// </summary>
-        public int AudioLeadIn { get; set; }
+        public int AudioLeadIn { get; set; } = 0;
+        
+        /// <summary>
+        /// deprecated, here for compatibility.
+        /// </summary>
+        public string AudioHash { get; set; }
 
         /// <summary>
         /// The preview time. (the millisecond where the track starts to play in the menù when selected)
         /// </summary>
-        public int PreviewTime { get; set; }
+        public int PreviewTime { get; set; } = -1;
 
         /// <summary>
-        /// Specifies if there is a count down at the beginning of the level.
+        /// Specifies if there is a countdown at the beginning of the level.
         /// </summary>
-        public bool Countdown { get; set; }
+        public CountdownType Countdown { get; set; } = CountdownType.Normal;
 
         /// <summary>
         /// Specifies what is the default sampleset used.
         /// </summary>
-        public string SampleSet { get; set; }
+        public string SampleSet { get; set; } = "Normal";
 
         /// <summary>
         /// Specifies how often closely placed hit objects will be stacked together.
         /// </summary>
-        public float StackLeniency { get; set; }
+        public float StackLeniency { get; set; } = 0.7f;
 
         /// <summary>
         /// The game mode this level is mapped to. 0 is Osu!, 1 Taiko, 2 CTB, 3 Mania.
         /// </summary>
-        public int Mode { get; set; }
+        public GameMode Mode { get; set; } = GameMode.Osu;
 
         /// <summary>
         /// Specifies if the screen should use letterbox while in breaks.
         /// </summary>
-        public bool LetterBoxInBreaks { get; set; }
+        public bool LetterBoxInBreaks { get; set; } = false;
 
+        /// <summary>
+        /// deprecated, here for compatibility.
+        /// </summary>
+        public bool StoryFireInFront { get; set; } = true;
+        
+        /// <summary>
+        /// if storyboard should use userskin sprites.
+        /// </summary>
+        public bool UseSkinSprites { get; set; } = false;
+        
+        /// <summary>
+        /// deprecated, here for compatibility.
+        /// </summary>
+        public bool AlwaysShowPlayfield { get; set; } = false;
+        
+        /// <summary>
+        /// specifies the position of hitcircles overlay in respect to hit numbers.
+        /// </summary>
+        public OverlayPosition OverlayPosition { get; set; } = OverlayPosition.NoChange;
+        
+        /// <summary>
+        /// Preferred skin to use during gameplay.
+        /// </summary>
+        public string SkinPreference { get; set; }
+
+        /// <summary>
+        /// Epilepsy warning
+        /// </summary>
+        public bool EpilepsyWarning { get; set; } = false;
+
+        /// <summary>
+        /// Offset in beats before the countdown starts.
+        /// </summary>
+        public int CountdownOffset { get; set; } = 0;
+
+        /// <summary>
+        /// If the map should use N+1 key layout in mania.
+        /// </summary>
+        public bool SpecialStyle { get; set; } = false;
+        
         /// <summary>
         /// specifies whether the storyboard should be widescreen.
         /// </summary>
         public bool WideScreenStoryboard { get; set; }
         
         /// <summary>
-        /// Epilepsy warning
+        /// If the sound samples should be stretched when using song speed modifiers.
         /// </summary>
-        public bool EpilepsyWarning { get; set; }
-        
+        public bool SamplesMatchPlaybackRate { get; set; } = false;
+
         #endregion
 
         #region Editor
-
-        //coming soon...
+        /// <summary>
+        /// time in milliseconds of each bookmark.
+        /// </summary>
+        public List<int> Bookmarks { get; set; } = new List<int>();
+        
+        /// <summary>
+        /// distance snap multiplier
+        /// </summary>
         public float DistanceSpacing { get; set; }
+        
+        /// <summary>
+        /// BeatSnap divisor
+        /// </summary>
         public int BeatDivisor { get; set; }
+        
+        /// <summary>
+        /// Grid size
+        /// </summary>
         public int GridSize { get; set; }
+            
+        /// <summary>
+        /// Scale factor for the timeline.
+        /// </summary>
+        public float TimelineZoom { get; set; }
         
         #endregion
 
@@ -136,17 +274,17 @@ namespace OsuLoader
         ///<summary>
         /// Collection of tags separated by spaces.
         /// </summary>
-        public string Tags { get; set; }
+        public List<string> Tags { get; set; } = new List<string>();
 
         ///<summary>
-        /// ID of the single beatmap.
+        /// ID of the difficulty.
         /// </summary>
-        public int BeatmapID { get; set; }
+        public int BeatmapId { get; set; }
 
         ///<summary>
         /// ID of the beatmap set.
         /// </summary>
-        public int BeatmapSetID { get; set; }
+        public int BeatmapSetId { get; set; }
 
         #endregion
 
@@ -155,7 +293,7 @@ namespace OsuLoader
         /// <summary>
         /// HP drain rate of the difficulty
         /// </summary>
-        public float HPDrainRate { get; set; }
+        public float HpDrainRate { get; set; }
 
         ///<summary>
         /// Size of the hitobjects (CS)
@@ -185,8 +323,11 @@ namespace OsuLoader
         #endregion
 
         #region Events
-
-        //Coming soon...
+        
+        /// <summary>
+        /// List of Event data structures. Use GetEventType() to determine the type of event.
+        /// </summary>
+        public List<IEvent> Events { get; set; } = new List<IEvent>();
 
         #endregion
 
@@ -200,8 +341,11 @@ namespace OsuLoader
         #endregion
 
         #region Colours
-
-        public List<colour> Colours { get; set; }
+        /// <summary>
+        /// Tuple containing Colors section data.
+        /// </summary>
+        /// <value>string will hold Combo#/SliderTrackOverride/SliderBorder, Color will always hold an RGB value.</value>
+        public List<Tuple<string, Color>> Colours { get; set; }
 
         #endregion
 

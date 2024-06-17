@@ -53,13 +53,11 @@ namespace OsuLoader {
 		/// <summary>
 		/// Indicate whether this TimingPoint is inherithed.
 		/// </summary>
-		/// <value><c>true</c> if inherithed; otherwise, <c>false</c>.</value>
-		public bool Inherithed { get; set; }
+		public bool Uninherited { get; set; }
 
 		/// <summary>
 		/// Indicate whether this TimingPoint is under kiai.
 		/// </summary>
-		/// <value><c>true</c> if kiai; otherwise, <c>false</c>.</value>
-		public bool Kiai { get; set; }
+		public TimingEffect Effects { get; set; }
 	}
 } 
