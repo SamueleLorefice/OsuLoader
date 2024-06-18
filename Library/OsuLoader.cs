@@ -22,41 +22,45 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration.Ini;
+using Microsoft.Extensions.FileProviders;
 
-namespace OsuLoader
-{
+namespace OsuLoader {
     /// <summary>
     /// Static class that manages the loading a deserialization of .osu files.
     /// </summary>
-    public static class OsuLoader
-    {
-        
+    public static class OsuLoader {
+        #region OldShittyCode
+
         /// <summary>
         /// Load and deserialize a specified .osu file
         /// </summary>
         /// <returns>The .osu file as BeatMap object</returns>
         /// <param name="path">File location of the .osu (including the filename itself)</param>
-        [Obsolete("Old method that uses internal MS only P/Invoke functions, use GetBeatmap instead. This  will be removed in the future", false)] 
-        public static BeatMap LoadDotOsu(string path)
-        {
+        [Obsolete("Old method that uses internal MS only P/Invoke functions, use GetBeatmap instead. This  will be removed in the future", false)]
+        public static BeatMap LoadDotOsu(string path) {
             #region Read of the file as ini
-            IniFile beatmap = new IniFile(path);
-            Dictionary<string, string> generalKeyPairs = beatmap.GetKeyValuesPair("General");
-            Dictionary<string, string> metadataKeyPairs = beatmap.GetKeyValuesPair("Metadata");
+
+            IniFile                    beatmap            = new IniFile(path);
+            Dictionary<string, string> generalKeyPairs    = beatmap.GetKeyValuesPair("General");
+            Dictionary<string, string> metadataKeyPairs   = beatmap.GetKeyValuesPair("Metadata");
             Dictionary<string, string> difficultyKeyPairs = beatmap.GetKeyValuesPair("Difficulty");
-            Dictionary<string, string> coloursKeyPairs = beatmap.GetKeyValuesPair("Colours");
+            Dictionary<string, string> coloursKeyPairs    = beatmap.GetKeyValuesPair("Colours");
+
             #endregion
             #region read of the file as raw text
+
             string rawBeatmap = File.ReadAllText(path);
             //Instantiate the return object
             BeatMap parsedMap = new BeatMap();
+
             #endregion
             //--------------------------------------------------------------
             //Conversion of the values from ini to a dynamic object.
             #region General
 
-            if (generalKeyPairs.TryGetValue("AudioFilename", out var value))
+            if (generalKeyPairs.TryGetValue("AudioFilename", out string value))
                 parsedMap.AudioFileName = value;
             if (generalKeyPairs.TryGetValue("AudioLeadIn", out value))
                 parsedMap.AudioLeadIn = int.Parse(value);
@@ -74,8 +78,10 @@ namespace OsuLoader
                 parsedMap.LetterBoxInBreaks = bool.Parse(value);
             if (generalKeyPairs.TryGetValue("WideScreenStoryboard", out value))
                 parsedMap.WideScreenStoryboard = bool.Parse(value);
+
             #endregion
             #region Metadata
+
             if (metadataKeyPairs.TryGetValue("Title", out value))
                 parsedMap.Title = value;
             if (metadataKeyPairs.TryGetValue("TitleUnicode", out value))
@@ -99,6 +105,7 @@ namespace OsuLoader
 
             #endregion
             #region Difficulty
+
             if (difficultyKeyPairs.TryGetValue("HPDrainRate", out value))
                 parsedMap.HpDrainRate = float.Parse(value);
             if (difficultyKeyPairs.TryGetValue("CircleSize", out value))
@@ -111,77 +118,60 @@ namespace OsuLoader
                 parsedMap.SliderMultiplier = float.Parse(value);
             if (difficultyKeyPairs.TryGetValue("SliderTickRate", out value))
                 parsedMap.SliderTickRate = float.Parse(value);
+
             #endregion
             #region Colours
-            parsedMap.Colours = new List<Tuple<string, Color>>();
-            for (int i = 0; i < coloursKeyPairs.Count; i++)
-            {
-                string[] splitRgb = new string[3];
-                string comboN = Convert.ToString(i + 1);
 
-                if (coloursKeyPairs.TryGetValue("Combo" + comboN + " ", out value))
-                {
-                    splitRgb = value.Split(',');
+            parsedMap.Colours = new List<Tuple<string, Color>>();
+            for (int i = 0; i < coloursKeyPairs.Count; i++) {
+                string[] splitRgb = new string[3];
+                string   comboN   = Convert.ToString(i + 1);
+
+                if (coloursKeyPairs.TryGetValue("Combo" + comboN + " ", out value)) {
+                    splitRgb    = value.Split(',');
                     splitRgb[0] = splitRgb[0].Trim();
-                    parsedMap.Colours.Add(new Tuple<string, Color>($"Combo{comboN}", new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
-                }else if (coloursKeyPairs.TryGetValue("SliderTrackOverride", out value)){
-                    splitRgb = value.Split(',');
+                    parsedMap.Colours.Add(new Tuple<string, Color>($"Combo{comboN}",
+                        new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
+                }
+                else if (coloursKeyPairs.TryGetValue("SliderTrackOverride", out value)) {
+                    splitRgb    = value.Split(',');
                     splitRgb[0] = splitRgb[0].Trim();
-                    parsedMap.Colours.Add(new Tuple<string, Color>("SliderTrackOverride", new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
-                }else if (coloursKeyPairs.TryGetValue("SliderBorder", out value)){
-                    splitRgb = value.Split(',');
+                    parsedMap.Colours.Add(new Tuple<string, Color>("SliderTrackOverride",
+                        new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
+                }
+                else if (coloursKeyPairs.TryGetValue("SliderBorder", out value)) {
+                    splitRgb    = value.Split(',');
                     splitRgb[0] = splitRgb[0].Trim();
-                    parsedMap.Colours.Add(new Tuple<string, Color>("SliderBorder", new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
+                    parsedMap.Colours.Add(new Tuple<string, Color>("SliderBorder",
+                        new Color(int.Parse(splitRgb[0]), int.Parse(splitRgb[1]), int.Parse(splitRgb[2]))));
                 }
             }
+
             #endregion
             //--------------------------------------------------------------
             //Conversion of the values from the raw text file
             #region from raw text
+
             //Subdivision of the string over sections
             string[] partialBm = rawBeatmap.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             //Recognize where timing points and hit objects are
             int timingIndex = Array.IndexOf(partialBm, "[TimingPoints]");
-            int hitIndex = Array.IndexOf(partialBm, "[HitObjects]");
+            int hitIndex    = Array.IndexOf(partialBm, "[HitObjects]");
             //initialize parsedMap timing point list and notes point list
             parsedMap.TimingPoints = new List<TimingPoint>();
             /*
             parsedMap.SingleNotes = new List<Note>();
             parsedMap.LongNotes = new List<LongNote>();*/
             //read the timing points
-            for (int i = timingIndex; i < hitIndex; i++)
-            {
+            for (int i = timingIndex; i < hitIndex; i++) {
                 TimingPoint parsed = ParseTimingPoint(partialBm[i]);
                 if (parsed.Offset != 0)
                     parsedMap.TimingPoints.Add(parsed);
             }
             //TODO: read the hit objects
+
             #endregion
             return parsedMap;
-        }
-        
-        /// <summary>
-        /// Get a BeatMap object from a .osu file
-        /// </summary>
-        /// <param name="fileString">The .osu file as a string</param>
-        /// <returns>The BeatMap object</returns>
-        /// <remarks>Note that this version requires that you load the osu file from the filesystem.</remarks>
-        public static BeatMap GetBeatMap(string fileString)
-        {
-            
-            return null;
-        }
-        
-        /// <summary>
-        /// Get a BeatMap object from a .osu file
-        /// </summary>
-        /// <param name="path">The path to the .osu file</param>
-        /// <returns>The BeatMap object</returns>
-        /// <remarks>This version, unlike the other, loads the osu file from the filesystem using a ReadAllText method.</remarks>
-        public static BeatMap GetBeatMapFromFile(string path)
-        {
-            string fileString = File.ReadAllText(path);
-            return GetBeatMap(fileString);
         }
 
         /// <summary>
@@ -190,70 +180,65 @@ namespace OsuLoader
         /// <param name="path">File save path</param>
         /// <param name="toWrite">Object to write</param>
         [Obsolete("Old methods that relies on internal MS only P/Invoke functions, use WriteBeatmap instead. This will be removed in the future", false)]
-        public static void SaveDotOsu(string path, BeatMap toWrite)
-        {
+        public static void SaveDotOsu(string path, BeatMap toWrite) {
             IniFile beatmap = new IniFile(path);
             beatmap.WriteAllSection("General",
-                "AudioFilename: " + toWrite.AudioFileName +
-                "\r\nAudioLeadIn: " + toWrite.AudioLeadIn +
-                "\r\nPreviewTime: " + toWrite.PreviewTime +
-                "\r\nCountDown: " + toWrite.Countdown +
-                "\r\nSampleSet: " + toWrite.SampleSet +
-                "\r\nStackLeniency: " + toWrite.StackLeniency +
-                "\r\nMode: " + toWrite.Mode +
-                "\r\nLetterBoxInBreaks: " + toWrite.LetterBoxInBreaks +
+                "AudioFilename: "          + toWrite.AudioFileName     +
+                "\r\nAudioLeadIn: "        + toWrite.AudioLeadIn       +
+                "\r\nPreviewTime: "        + toWrite.PreviewTime       +
+                "\r\nCountDown: "          + toWrite.Countdown         +
+                "\r\nSampleSet: "          + toWrite.SampleSet         +
+                "\r\nStackLeniency: "      + toWrite.StackLeniency     +
+                "\r\nMode: "               + toWrite.Mode              +
+                "\r\nLetterBoxInBreaks: "  + toWrite.LetterBoxInBreaks +
                 "\r\nWideScreenStoryboard" + toWrite.WideScreenStoryboard);
             beatmap.WriteAllSection("Metadata",
-                "Title: " + toWrite.Title +
-                "\r\nTitleUnicode: " + toWrite.TitleUnicode +
-                "\r\nArtist: " + toWrite.Artist +
+                "Title: "             + toWrite.Title         +
+                "\r\nTitleUnicode: "  + toWrite.TitleUnicode  +
+                "\r\nArtist: "        + toWrite.Artist        +
                 "\r\nArtistUnicode: " + toWrite.ArtistUnicode +
-                "\r\nCreator: " + toWrite.Creator +
-                "\r\nVersion: " + toWrite.Version +
-                "\r\nSource: " + toWrite.Source +
-                "\r\nTags: " + toWrite.Tags +
-                "\r\nBeatmapID: " + toWrite.BeatmapId +
-                "\r\nBeatmapSetID: " + toWrite.BeatmapSetId);
+                "\r\nCreator: "       + toWrite.Creator       +
+                "\r\nVersion: "       + toWrite.Version       +
+                "\r\nSource: "        + toWrite.Source        +
+                "\r\nTags: "          + toWrite.Tags          +
+                "\r\nBeatmapID: "     + toWrite.BeatmapId     +
+                "\r\nBeatmapSetID: "  + toWrite.BeatmapSetId);
             beatmap.WriteAllSection("Difficulty",
-                "HPDrainRate: " + toWrite.HpDrainRate +
-                "\r\nCircleSize: " + toWrite.CircleSize +
+                "HPDrainRate: "           + toWrite.HpDrainRate       +
+                "\r\nCircleSize: "        + toWrite.CircleSize        +
                 "\r\nOverallDifficulty: " + toWrite.OverallDifficulty +
-                "\r\nApproachRate: " + toWrite.ApproachRate +
-                "\r\nSliderMultiplier: " + toWrite.SliderMultiplier +
-                "\r\nSliderTickRate: " + toWrite.SliderTickRate);
-            beatmap.WriteAllSection("Colours", GetColoursToSave(toWrite));
+                "\r\nApproachRate: "      + toWrite.ApproachRate      +
+                "\r\nSliderMultiplier: "  + toWrite.SliderMultiplier  +
+                "\r\nSliderTickRate: "    + toWrite.SliderTickRate);
+            beatmap.WriteAllSection("Colours",      GetColoursToSave(toWrite));
             beatmap.WriteAllSection("TimingPoints", GetTimingPointString(toWrite.TimingPoints));
             //TODO: write hit objects
         }
-        
-        static string GetColoursToSave(BeatMap toWrite)
-        {
+
+        private static string GetColoursToSave(BeatMap toWrite) {
             string coloursToSave = null;
-            int number = 1;
-            foreach (Tuple<string, Color> rgb in toWrite.Colours)
-            {
+            int    number        = 1;
+            foreach (Tuple<string, Color> rgb in toWrite.Colours) {
                 coloursToSave += $"{rgb.Item1} : {rgb.Item2.R},{rgb.Item2.G},{rgb.Item2.B}\r\n";
                 number++;
             }
             return coloursToSave;
         }
 
-        static string GetTimingPointString(List<TimingPoint> timings)
-        {
+        private static string GetTimingPointString(List<TimingPoint> timings) {
             string timingStr = "";
-            foreach (var tp in timings)
-            {
+            foreach (TimingPoint tp in timings) {
                 timingStr += tp.Offset + "," + tp.MilliSecondPerBeat + "," + tp.Meter;
                 if (tp.Uninherited)
                     timingStr += "0,";
                 else
                     timingStr += "1,";
-                
+
                 if (tp.Effects.HasFlag(TimingEffect.Kiai))
                     timingStr += "1";
                 else
                     timingStr += "0";
-                
+
                 timingStr += "\r\n";
             }
             return timingStr;
@@ -264,19 +249,16 @@ namespace OsuLoader
         /// </summary>
         /// <returns>The timing point</returns>
         /// <param name="toParse">string containing a timing point</param>
-        private static TimingPoint ParseTimingPoint(string toParse)
-        {
+        private static TimingPoint ParseTimingPoint(string toParse) {
             string[] split = toParse.Split(new string[] { "," }, StringSplitOptions.None);
-            if (split.Length != 8)
-            {
+            if (split.Length != 8) {
                 return new TimingPoint();
             }
             else {
-                TimingPoint toReturn = new TimingPoint
-                {
-                    Offset = int.Parse(split[0]),
+                TimingPoint toReturn = new TimingPoint {
+                    Offset             = int.Parse(split[0]),
                     MilliSecondPerBeat = float.Parse(split[1]),
-                    Meter = int.Parse(split[2]),
+                    Meter              = int.Parse(split[2]),
                     //inherited check
                     Uninherited = int.Parse(split[6]) == 0,
                     //kiai check
@@ -287,8 +269,7 @@ namespace OsuLoader
             }
         }
 
-        static string GetHitObjectsString(List<IHitObject> notes)
-        {
+        private static string GetHitObjectsString(List<IHitObject> notes) {
             string hitObjStr = "";
             /*
             foreach (var note in sn)
@@ -339,6 +320,430 @@ namespace OsuLoader
             }
             return hitObjStr;*/
             throw new NotImplementedException();
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Get a BeatMap object from a .osu file
+        /// </summary>
+        /// <param name="path">The path to the .osu file</param>
+        /// <returns>The BeatMap object</returns>
+        /// <remarks>This version, unlike the other, loads the osu file from the filesystem using a ReadAllText method.</remarks>
+        public static BeatMap GetBeatMapFromFile(string path) {
+            string[] osuFile = File.ReadAllLines(path);
+            return GetBeatMap(osuFile);
+        }
+
+        /// <summary>
+        /// Get a BeatMap object from a .osu file
+        /// </summary>
+        /// <param name="fileString">The .osu file as a string</param>
+        /// <returns>The BeatMap object</returns>
+        /// <remarks>Note that this version requires that you load the osu file from the filesystem.</remarks>
+        public static BeatMap GetBeatMap(string[] osuFile) {
+            BeatMap parsedMap = new BeatMap();
+            int     cursor    = 0;
+
+            //Detect Version
+            Regex  versionRegex = new Regex(@"(osu file format v[0-9]+)");
+            string version      = versionRegex.Match(osuFile[0]).Value;
+
+            for (int i = 0; i < osuFile.Length; i++)
+                if (versionRegex.IsMatch(osuFile[i])) {
+                    parsedMap.OsuVersion = versionRegex.Match(osuFile[i]).Value;
+                    Console.WriteLine("Detected version: " + version);
+                    cursor = i;
+                }
+
+            if (parsedMap.OsuVersion == null)
+                throw new Exception("Invalid .osu file format, can't detect version.");
+
+            //Scan ahead for General Section
+            cursor = SearchForSection(osuFile, "[General]");
+            if (cursor != -1) {
+                Console.WriteLine("General Section found at line " + (cursor+1));
+                //Gather the data from the General Section
+                Dictionary<string, string> generalKeyPairs = GetKeyPairs(osuFile, ref cursor);
+                //and parse it
+                ParseGeneralSection(generalKeyPairs, ref parsedMap);
+            }
+            else {
+                //throw exception if the General Section is not found, it's not optional
+                throw new Exception("General Section not found, invalid .osu file format.");
+            }
+
+            //Scan ahead for Editor Section
+            cursor = SearchForSection(osuFile, "[Editor]");
+            if (cursor != -1) {
+                Console.WriteLine("Editor Section found at line " + (cursor+1));
+                Dictionary<string, string> editorKeyPairs = GetKeyPairs(osuFile, ref cursor);
+                ParseEditorSection(editorKeyPairs, ref parsedMap);
+            }
+            else {
+                Console.WriteLine("Editor Section not found, skipping.");
+            }
+
+            //Scan ahead for Metadata Section
+            cursor = SearchForSection(osuFile, "[Metadata]");
+            if (cursor != -1) {
+                Console.WriteLine("Metadata Section found at line " + (cursor+1));
+                Dictionary<string, string> metadataKeyPairs = GetKeyPairs(osuFile, ref cursor);
+                ParseMetadataSection(metadataKeyPairs, ref parsedMap);
+            }
+            else {
+                //throw exception if the Metadata Section is not found, it's not optional
+                throw new Exception("Metadata Section not found, invalid .osu file format.");
+            }
+
+            //Scan ahead for Difficulty Section
+            cursor = SearchForSection(osuFile, "[Difficulty]");
+            if (cursor != -1) {
+                Console.WriteLine("Difficulty Section found at line " + (cursor+1));
+                Dictionary<string, string> difficultyKeyPairs = GetKeyPairs(osuFile, ref cursor);
+                ParseDifficultySection(difficultyKeyPairs, ref parsedMap);
+            } else {
+                //throw exception if the Difficulty Section is not found, it's not optional
+                throw new Exception("Difficulty Section not found, invalid .osu file format.");
+            }
+            
+            //Scan ahead for Events Section
+            cursor = SearchForSection(osuFile, "[Events]");
+            if (cursor != -1) {
+                Console.WriteLine("Events Section found at line " + (cursor+1));
+                cursor++;
+                int eventStart = cursor; 
+                GetNextSection(ref osuFile, ref cursor);
+                int eventEnd = cursor-1;
+                ParseEventSection(osuFile, eventStart, eventEnd, ref parsedMap);
+            } else {
+                Console.WriteLine("Events Section not found, skipping.");
+            }
+            
+            //Scan ahead for TimingPoints Section
+            cursor = SearchForSection(osuFile, "[TimingPoints]");
+            if (cursor != -1) {
+                Console.WriteLine("TimingPoints Section found at line " + (cursor + 1));
+                cursor++;
+                int timingStart = cursor;
+                GetNextSection(ref osuFile, ref cursor);
+                int timingEnd = cursor - 1;
+                ParseTimingPointsSection(osuFile, timingStart, timingEnd, ref parsedMap);
+            } else {
+                throw new Exception("Timing Section not found, invalid .osu file format.");
+            }
+            
+            //Scan ahead for Colours Section
+            cursor = SearchForSection(osuFile, "[Colours]");
+            if (cursor != -1) {
+                Console.WriteLine("Colours Section found at line " + (cursor + 1));
+                cursor++;
+                int colourStart = cursor;
+                GetNextSection(ref osuFile, ref cursor);
+                int colourEnd = cursor - 1;
+                ParseColoursSection(osuFile, colourStart, colourEnd, ref parsedMap);
+            } else {
+                Console.WriteLine("Colours Section not found, skipping.");
+            }
+
+            //Scan ahead for HitObjects Section
+            cursor = SearchForSection(osuFile, "[HitObjects]");
+            if (cursor != -1) {
+                Console.WriteLine("HitObjects Section found at line " + (cursor + 1));
+                cursor++;
+                int hitStart = cursor;
+                GetNextSection(ref osuFile, ref cursor);
+                int hitEnd = cursor - 1;
+                ParseHitObjectsSection(osuFile, hitStart, hitEnd, ref parsedMap);
+            } else {
+                throw new Exception("HitObjects Section not found, invalid .osu file format.");
+            }
+            
+            return parsedMap;
+        }
+
+        private static void GetNextSection(ref string[] osuFile, ref int cursor) {
+            for (int i = cursor; i < osuFile.Length; i++)
+                if (osuFile[i].StartsWith("[")) {
+                    cursor = i;
+                    break;
+                }
+        }
+
+        private static int SearchForSection(string[] osuFile, string section) {
+            for (int i = 0; i < osuFile.Length; i++)
+                if (osuFile[i].StartsWith(section))
+                    return i;
+            return -1;
+        }
+
+        private static Dictionary<string, string> GetKeyPairs(string[] osuFile, ref int cursor) {
+            Dictionary<string, string> keyPairs = new Dictionary<string, string>();
+            for (int i = cursor; i < osuFile.Length; i++) {
+                //skip comments
+                if (osuFile[i].StartsWith("//")) continue;
+                //check if we reached the next section
+                if (osuFile[i].StartsWith("[")) {
+                    cursor = i;
+                    break;
+                }
+                string[] split = osuFile[i].Split(':');
+                keyPairs.Add(split[0], split[1]);
+            }
+            return keyPairs;
+        }
+
+        private static void ParseGeneralSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+            foreach (KeyValuePair<string, string> pair in keyPairs)
+                switch (pair.Key) {
+                    case "AudioFilename":
+                        beatMap.AudioFileName = pair.Value;
+                        break;
+                    case "AudioLeadIn":
+                        beatMap.AudioLeadIn = int.Parse(pair.Value);
+                        break;
+                    case "AudioHash":
+                        beatMap.AudioHash = pair.Value;
+                        break;
+                    case "PreviewTime":
+                        beatMap.PreviewTime = int.Parse(pair.Value);
+                        break;
+                    case "Countdown":
+                        beatMap.Countdown = (CountdownType)int.Parse(pair.Value);
+                        break;
+                    case "SampleSet":
+                        beatMap.SampleSet = pair.Value;
+                        break;
+                    case "StackLeniency":
+                        beatMap.StackLeniency = float.Parse(pair.Value);
+                        break;
+                    case "Mode":
+                        beatMap.Mode = (GameMode)int.Parse(pair.Value);
+                        break;
+                    case "LetterBoxInBreaks":
+                        beatMap.LetterBoxInBreaks = bool.Parse(pair.Value);
+                        break;
+                    case "StoryFireInFront":
+                        beatMap.StoryFireInFront = bool.Parse(pair.Value);
+                        break;
+                    case "UseSkinSprites":
+                        beatMap.UseSkinSprites = bool.Parse(pair.Value);
+                        break;
+                    case "AlwaysShowPlayfield":
+                        beatMap.AlwaysShowPlayfield = bool.Parse(pair.Value);
+                        break;
+                    case "OverlayPosition":
+                        beatMap.OverlayPosition = (OverlayPosition)int.Parse(pair.Value);
+                        break;
+                    case "SkinPreference":
+                        beatMap.SkinPreference = pair.Value;
+                        break;
+                    case "EpilepsyWarning":
+                        beatMap.EpilepsyWarning = bool.Parse(pair.Value);
+                        break;
+                    case "CountdownOffset":
+                        beatMap.CountdownOffset = int.Parse(pair.Value);
+                        break;
+                    case "SpecialStyle":
+                        beatMap.SpecialStyle = bool.Parse(pair.Value);
+                        break;
+                    case "WideScreenStoryboard":
+                        beatMap.WideScreenStoryboard = bool.Parse(pair.Value);
+                        break;
+                    case "SamplesMatchPlaybackRate":
+                        beatMap.SamplesMatchPlaybackRate = bool.Parse(pair.Value);
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown/Unhandled general key: \"{pair.Key}\"");
+                        break;
+                }
+        }
+
+        private static void ParseEditorSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+            foreach (KeyValuePair<string, string> pair in keyPairs)
+                switch (pair.Key) {
+                    case "Bookmarks":
+                        beatMap.Bookmarks = pair.Value.Split(',').Select(int.Parse).ToList();
+                        break;
+                    case "DistanceSpacing":
+                        beatMap.DistanceSpacing = float.Parse(pair.Value);
+                        break;
+                    case "BeatDivisor":
+                        beatMap.BeatDivisor = int.Parse(pair.Value);
+                        break;
+                    case "GridSize":
+                        beatMap.GridSize = int.Parse(pair.Value);
+                        break;
+                    case "TimelineZoom":
+                        beatMap.TimelineZoom = float.Parse(pair.Value);
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown/Unhandled editor key: \"{pair.Key}\"");
+                        break;
+                }
+        }
+
+        private static void ParseMetadataSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+            foreach (KeyValuePair<string, string> pair in keyPairs)
+                switch (pair.Key) {
+                    case "Title":
+                        beatMap.Title = pair.Value;
+                        break;
+                    case "TitleUnicode":
+                        beatMap.TitleUnicode = pair.Value;
+                        break;
+                    case "Artist":
+                        beatMap.Artist = pair.Value;
+                        break;
+                    case "ArtistUnicode":
+                        beatMap.ArtistUnicode = pair.Value;
+                        break;
+                    case "Creator":
+                        beatMap.Creator = pair.Value;
+                        break;
+                    case "Version":
+                        beatMap.Version = pair.Value;
+                        break;
+                    case "Source":
+                        beatMap.Source = pair.Value;
+                        break;
+                    case "Tags":
+                        beatMap.Tags = pair.Value.Split(' ').ToList();
+                        break;
+                    case "BeatmapID":
+                        beatMap.BeatmapId = int.Parse(pair.Value);
+                        break;
+                    case "BeatmapSetID":
+                        beatMap.BeatmapSetId = int.Parse(pair.Value);
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown/Unhandled metadata key: \"{pair.Key}\"");
+                        break;
+                }
+        }
+        
+        private static void ParseDifficultySection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+            foreach (KeyValuePair<string, string> pair in keyPairs)
+                switch (pair.Key) {
+                    case "HPDrainRate":
+                        beatMap.HpDrainRate = float.Parse(pair.Value);
+                        break;
+                    case "CircleSize":
+                        beatMap.CircleSize = float.Parse(pair.Value);
+                        break;
+                    case "OverallDifficulty":
+                        beatMap.OverallDifficulty = float.Parse(pair.Value);
+                        break;
+                    case "ApproachRate":
+                        beatMap.ApproachRate = float.Parse(pair.Value);
+                        break;
+                    case "SliderMultiplier":
+                        beatMap.SliderMultiplier = float.Parse(pair.Value);
+                        break;
+                    case "SliderTickRate":
+                        beatMap.SliderTickRate = float.Parse(pair.Value);
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown/Unhandled difficulty key: \"{pair.Key}\"");
+                        break;
+                }
+        }
+        
+        private static void ParseEventSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+            for (int i = start; i < end; i++) {
+                if (osuFile[i].StartsWith("//")) continue;
+                
+                string[] eventString = osuFile[i].Split(',');
+                eventString[0] = eventString[0].Trim();
+                switch (eventString[0].ToLower()) {
+                    case "0":
+                    case "background":
+                        BackgroundEvent bg = new BackgroundEvent {
+                            StartTime = int.Parse(eventString[1]),
+                            Filename  = eventString[2].Trim(), 
+                        };
+                        if (eventString.Length > 3) {
+                            bg.XOffset = int.Parse(eventString[3]);
+                            bg.YOffset = int.Parse(eventString[4]);
+                        };
+                        beatMap.Events.Add(bg);
+                        break;
+                    case "1":
+                    case "video":
+                        VideoEvent vid = new VideoEvent {
+                            StartTime = int.Parse(eventString[1]),
+                            Filename  = eventString[2].Trim(),
+                        };
+                        if (eventString.Length > 3) {
+                            vid.XOffset = int.Parse(eventString[3]);
+                            vid.YOffset = int.Parse(eventString[4]);
+                        };
+                        beatMap.Events.Add(vid);
+                        break;
+                    case "2":
+                    case "break":
+                        BreakEvent brk = new BreakEvent {
+                            StartTime = int.Parse(eventString[1]),
+                            EndTime   = int.Parse(eventString[2])
+                        };
+                        beatMap.Events.Add(brk);
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown/Unhandled event type: \"{osuFile[i]}\" at line {i+1}");
+                        break;
+                }
+            }
+        }
+        
+        private static void ParseTimingPointsSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+            for (int i = start; i < end; i++) {
+                if (osuFile[i].StartsWith("//")) continue;
+                
+                string[] timingString = osuFile[i].Split(',');
+                if (timingString.Length != 8) {
+                    Console.WriteLine($"Invalid timing point at line {i+1}");
+                    continue;
+                }
+                TimingPoint tp = new TimingPoint {
+                    Offset             = int.Parse(timingString[0]),
+                    MilliSecondPerBeat = float.Parse(timingString[1]),
+                    Meter              = int.Parse(timingString[2]),
+                    SampleSet          = (HitSoundBank)int.Parse(timingString[3]),
+                    SampleIndex        = int.Parse(timingString[4]),
+                    Volume             = int.Parse(timingString[5]),
+                    Uninherited        = int.Parse(timingString[6]) == 1,
+                    Effects            = int.Parse(timingString[7]) == 1 ? TimingEffect.Kiai :
+                                         int.Parse(timingString[7]) == 3 ? TimingEffect.OmitFirstBarLine : TimingEffect.None
+                    
+                };
+                beatMap.TimingPoints.Add(tp);
+            }
+        }
+        
+        private static void ParseColoursSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+            for (int i = start; i < end; i++) {
+                if (osuFile[i].StartsWith("//")) continue;
+                
+                string[] colourString = osuFile[i].Split(':');
+                if (colourString.Length != 2) {
+                    Console.WriteLine($"Invalid colour at line {i+1}");
+                    continue;
+                }
+                string[] rgb = colourString[1].Split(',');
+                if (rgb.Length != 3) {
+                    Console.WriteLine($"Invalid colour at line {i+1}");
+                    continue;
+                }
+                Color colour = new Color(int.Parse(rgb[0]), int.Parse(rgb[1]), int.Parse(rgb[2]));
+                beatMap.Colours.Add(new Tuple<string, Color>(colourString[0], colour));
+            }
+        }
+        
+        private static void ParseHitObjectsSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+            for (int i = start; i < end; i++) {
+                if (osuFile[i].StartsWith("//")) continue;
+                string[] hitLine = osuFile[i].Split(',');
+            }
         }
     }
 }

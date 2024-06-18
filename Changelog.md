@@ -20,11 +20,13 @@ All notable changes to this project will be documented in this file.
 - Added support for all timing effects rather than just Kiai time.
 - [**breaking**] Added HitObjects Supporting data structures.
 - [**breaking**] Removed SingleNotes and LongNotes
+- Added Osu Map File Version property to the BeatMap class
 
 ### 🐛 Bug Fixes
 
 - Some Colors in the colors section could have been skipped due to faulty logic
 - Timing points structs properties naming has been changed to reflect actual .osu spec
+- Solved a stackOverflow when setting volume property on TimingPoint struct.
 
 ### 🚜 Refactor
 
@@ -41,6 +43,7 @@ All notable changes to this project will be documented in this file.
 - Moved enums to a separate file to declutter the BeatMap.cs file.
 - Moved IEvent related structs to their own file.
 - Moved color struct to it's own file.
+- Changed overall solution code style
 
 ### 📚 Documentation
 

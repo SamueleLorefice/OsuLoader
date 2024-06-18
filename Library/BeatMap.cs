@@ -17,13 +17,17 @@
 using System;
 using System.Collections.Generic;
 
-namespace OsuLoader
-{
+namespace OsuLoader {
     /// <summary>
     /// Represent all the data from a .osu file (use osu loader to initialize this object.)
     /// </summary>
-    public class BeatMap
-    {
+    public class BeatMap {
+
+        /// <summary>
+        /// fileVersion of the .osu file.
+        /// </summary>
+        public string OsuVersion { get; set; } = "v14";
+
         #region General
 
         /// <summary>
@@ -35,7 +39,7 @@ namespace OsuLoader
         /// The time before the actual track start to play. (in milliseconds)
         /// </summary>
         public int AudioLeadIn { get; set; } = 0;
-        
+
         /// <summary>
         /// deprecated, here for compatibility.
         /// </summary>
@@ -75,22 +79,22 @@ namespace OsuLoader
         /// deprecated, here for compatibility.
         /// </summary>
         public bool StoryFireInFront { get; set; } = true;
-        
+
         /// <summary>
         /// if storyboard should use userskin sprites.
         /// </summary>
         public bool UseSkinSprites { get; set; } = false;
-        
+
         /// <summary>
         /// deprecated, here for compatibility.
         /// </summary>
         public bool AlwaysShowPlayfield { get; set; } = false;
-        
+
         /// <summary>
         /// specifies the position of hitcircles overlay in respect to hit numbers.
         /// </summary>
         public OverlayPosition OverlayPosition { get; set; } = OverlayPosition.NoChange;
-        
+
         /// <summary>
         /// Preferred skin to use during gameplay.
         /// </summary>
@@ -110,12 +114,12 @@ namespace OsuLoader
         /// If the map should use N+1 key layout in mania.
         /// </summary>
         public bool SpecialStyle { get; set; } = false;
-        
+
         /// <summary>
         /// specifies whether the storyboard should be widescreen.
         /// </summary>
         public bool WideScreenStoryboard { get; set; }
-        
+
         /// <summary>
         /// If the sound samples should be stretched when using song speed modifiers.
         /// </summary>
@@ -124,31 +128,32 @@ namespace OsuLoader
         #endregion
 
         #region Editor
+
         /// <summary>
         /// time in milliseconds of each bookmark.
         /// </summary>
         public List<int> Bookmarks { get; set; } = new List<int>();
-        
+
         /// <summary>
         /// distance snap multiplier
         /// </summary>
         public float DistanceSpacing { get; set; }
-        
+
         /// <summary>
         /// BeatSnap divisor
         /// </summary>
         public int BeatDivisor { get; set; }
-        
+
         /// <summary>
         /// Grid size
         /// </summary>
         public int GridSize { get; set; }
-            
+
         /// <summary>
         /// Scale factor for the timeline.
         /// </summary>
         public float TimelineZoom { get; set; }
-        
+
         #endregion
 
         #region Metadata
@@ -240,7 +245,7 @@ namespace OsuLoader
         #endregion
 
         #region Events
-        
+
         /// <summary>
         /// List of Event data structures. Use GetEventType() to determine the type of event.
         /// </summary>
@@ -253,24 +258,26 @@ namespace OsuLoader
         /// <summary>
         /// List of all timing points
         /// </summary>
-        public List<TimingPoint> TimingPoints { get; set; }
+        public List<TimingPoint> TimingPoints { get; set; } = new List<TimingPoint>();
 
         #endregion
 
         #region Colours
+
         /// <summary>
         /// Tuple containing Colors section data.
         /// </summary>
         /// <value>string will hold Combo#/SliderTrackOverride/SliderBorder, Color will always hold an RGB value.</value>
-        public List<Tuple<string, Color>> Colours { get; set; }
+        public List<Tuple<string, Color>> Colours { get; set; } = new List<Tuple<string, Color>>();
 
         #endregion
 
         #region Hit Objects
+
         /// <summary>
         /// list of all hitObjects contained in the beatmap.
         /// </summary>
-        List<IHitObject> HitObjects { get; set; }
+        private List<IHitObject> HitObjects { get; set; }
 
         #endregion
     }

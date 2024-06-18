@@ -3,13 +3,25 @@ osu file format v9
 [General]
 AudioFilename: Music.mp3
 AudioLeadIn: 1000
+AudioHash: 1234567890
 PreviewTime: 5000
 Countdown: 1
 SampleSet: TestSampleSet
 StackLeniency: 0.7
 Mode: 0
 LetterboxInBreaks: 1
+StoryFireInFront: 1
+UseSkinSprites: 1
+AlwaysShowPlayfield: 1
+OverlayPosition: 1
+SkinPreference: TestSkin
 EpilepsyWarning: 1
+CountdownOffset: 10
+SpecialStyle: 1
+WidescreenStoryboard: 1
+SamplesMatchPlaybackRate: 1
+
+
 
 [Editor]
 DistanceSpacing: 1.0

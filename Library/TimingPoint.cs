@@ -16,48 +16,52 @@
 using System.Configuration;
 
 namespace OsuLoader {
-	/// <summary>
-	/// Timing point
-	/// </summary>
-	public struct TimingPoint {
-		/// <summary>
-		/// Offset of the track timing (if inherithed is the distance from the last non inherithed timing point)
-		/// </summary>
-		public int Offset { get; set; }
+    /// <summary>
+    /// Timing point
+    /// </summary>
+    public struct TimingPoint {
+        /// <summary>
+        /// Offset of the track timing (if inherithed is the distance from the last non inherithed timing point)
+        /// </summary>
+        public int Offset { get; set; }
 
-		/// <summary>
-		/// Time for each beat
-		/// </summary>
-		public float MilliSecondPerBeat { get; set; }
+        /// <summary>
+        /// Time for each beat, if inherited, negative inverse slider velocity multiplier instead.
+        /// </summary>
+        public float MilliSecondPerBeat { get; set; }
 
-		/// <summary>
-		/// Meter
-		/// </summary>
-		public int Meter { get; set; }
+        /// <summary>
+        /// Beats per measure, ignored if inherited
+        /// </summary>
+        public int Meter { get; set; }
 
-		/// <summary>
-		/// Define the sample type
-		/// </summary>
-		public int SampleType { get; set; }
+        /// <summary>
+        /// Define the sample set
+        /// </summary>
+        public HitSoundBank SampleSet { get; set; }
+        
+        /// <summary>
+        /// Custom sample index. 0 = default.
+        /// </summary>
+        public int SampleIndex { get; set; }
 
-		/// <summary>
-		/// Define the sample set
-		/// </summary>
-		public int SampleSet { get; set; }
+        private int volume;
+        /// <summary>
+        /// Define the samples volume
+        /// </summary>
+        public int Volume {
+            get => volume;
+            set => volume = value < 0 ? 0 : value > 100 ? 100 : value;
+        }
 
-		/// <summary>
-		/// Define the samples volume
-		/// </summary>
-		public int Volume { get; set; }
+        /// <summary>
+        /// Indicate whether this TimingPoint is inherithed.
+        /// </summary>
+        public bool Uninherited { get; set; }
 
-		/// <summary>
-		/// Indicate whether this TimingPoint is inherithed.
-		/// </summary>
-		public bool Uninherited { get; set; }
-
-		/// <summary>
-		/// Indicate whether this TimingPoint is under kiai.
-		/// </summary>
-		public TimingEffect Effects { get; set; }
-	}
-} 
+        /// <summary>
+        /// Indicate whether this TimingPoint is under kiai.
+        /// </summary>
+        public TimingEffect Effects { get; set; }
+    }
+}
