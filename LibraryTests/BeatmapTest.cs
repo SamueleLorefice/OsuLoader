@@ -7,7 +7,6 @@ namespace LibraryTests {
     [TestFixture]
     public class BeatmapTest {
         private static Tuple<BeatMap, string>[] testCases = {
-            new Tuple<BeatMap, string>(loader.LoadDotOsu("TestFiles/OsuSTD.osu"),         "oldMethod"),
             new Tuple<BeatMap, string>(loader.GetBeatMapFromFile("TestFiles/OsuSTD.osu"), "newMethod")
         };
 

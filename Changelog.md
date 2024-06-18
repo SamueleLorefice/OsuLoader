@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Added Osu Map File Version property to the BeatMap class
 - [**breaking**] IHitObject now implements all of the shared properties.
 - [**breaking**] Hit sound data has been grouped into HitSample struct, containing both hitSound and hitSample data.
+- [**breaking**] Removed shitty old code in favor of the rewritten, faster implementation.
 
 ### 🐛 Bug Fixes
 
@@ -50,6 +51,7 @@ All notable changes to this project will be documented in this file.
 - Changed overall solution code style
 - Cleaned up usings in OsuLoader.cs
 - Removed some empty statements in event parsing section switch case.
+- [**breaking**] Removed useless dependencies.
 
 ### 📚 Documentation
 
