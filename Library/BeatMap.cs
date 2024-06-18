@@ -277,7 +277,7 @@ namespace OsuLoader {
         /// <summary>
         /// list of all hitObjects contained in the beatmap.
         /// </summary>
-        private List<IHitObject> HitObjects { get; set; }
+        public List<IHitObject> HitObjects { get; set; } = new List<IHitObject>();
 
         #endregion
     }

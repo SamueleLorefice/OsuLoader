@@ -4,22 +4,24 @@ using System.Numerics;
 
 namespace OsuLoader {
 
+    [Flags]
     public enum HitObjectType {
-        HitCircle  = 0,
-        Slider     = 1,
-        NewCombo   = 2,
-        Spinner    = 3,
-        ComboSkip1 = 4,
-        ComboSkip2 = 5,
-        ComboSkip3 = 6,
-        ManiaHold  = 7
+        HitCircle  = 1,
+        Slider     = 2,
+        NewCombo   = 4,
+        Spinner    = 8,
+        ComboSkip1 = 16,
+        ComboSkip2 = 32,
+        ComboSkip3 = 64,
+        ManiaHold  = 128
     }
 
+    [Flags]
     public enum HitSoundType {
-        Normal  = 0,
-        Whistle = 1,
-        Finish  = 2,
-        Clap    = 3
+        Normal  = 1,
+        Whistle = 2,
+        Finish  = 4,
+        Clap    = 8
     }
 
     public enum HitSoundBank {
@@ -41,9 +43,10 @@ namespace OsuLoader {
         public HitSoundBank AdditionSet { get; set; }
         public int          Index       { get; set; }
 
+        private int volume;
         public int Volume {
-            get => Volume;
-            set => Volume = Math.Max(Math.Min(value, 100), 0); // Clamp between 0 and 100
+            get => volume;
+            set => volume = Math.Max(Math.Min(value, 100), 0); // Clamp between 0 and 100
         }
 
         public string Filename { get; set; }
@@ -51,17 +54,22 @@ namespace OsuLoader {
 
     public interface IHitObject {
         public HitObjectType GetHitObjType();
+        public int           X            { get; set; }
+        public int           Y            { get; set; }
+        public int           Time         { get; set; }
+        public HitSample     HitSoundData { get; set; }
+        public int           ParamsCount  { get; }
     }
 
     public struct HitCircle : IHitObject {
         public HitObjectType GetHitObjType() {
             return HitObjectType.HitCircle;
         }
-        public int          X            { get; set; }
-        public int          Y            { get; set; }
-        public int          Time         { get; set; }
-        public HitSoundType HitSound     { get; set; }
-        public HitSoundBank HitSoundBank { get; set; }
+        public int       X            { get; set; }
+        public int       Y            { get; set; }
+        public int       Time         { get; set; }
+        public HitSample HitSoundData { get; set; }
+        public int       ParamsCount  => 6;
     }
 
     public struct Slider : IHitObject {
@@ -71,36 +79,37 @@ namespace OsuLoader {
         public int                                     X           { get; set; }
         public int                                     Y           { get; set; }
         public int                                     Time        { get; set; }
-        public HitSoundType                            HitSound    { get; set; }
+        public HitSample                               HitSoundData { get; set; }
         public CurveType                               CurveType   { get; set; }
         public List<Vector2>                           CurvePoints { get; set; }
         public int                                     Slides      { get; set; }
         public float                                   Length      { get; set; }
         public List<int>                               EdgeSounds  { get; set; }
         public List<Tuple<HitSoundType, HitSoundBank>> EdgeSets    { get; set; }
+        public int                                     ParamsCount => 11;
     }
 
     public struct Spinner : IHitObject {
         public HitObjectType GetHitObjType() {
             return HitObjectType.Spinner;
         }
-        public int          X         { get; set; }
-        public int          Y         { get; set; }
-        public int          Time      { get; set; }
-        public HitSoundType HitSound  { get; set; }
-        public int          EndTime   { get; set; }
-        public HitSoundBank HitSample { get; set; }
+        public int       X            { get; set; }
+        public int       Y            { get; set; }
+        public int       Time         { get; set; }
+        public HitSample HitSoundData { get; set; }
+        public int       EndTime      { get; set; }
+        public int       ParamsCount  => 7;
     }
 
     public struct ManiaHold : IHitObject {
         public HitObjectType GetHitObjType() {
             return HitObjectType.ManiaHold;
         }
-        public int          X         { get; set; }
-        public int          Y         { get; set; }
-        public int          Time      { get; set; }
-        public HitSoundType HitSound  { get; set; }
-        public int          EndTime   { get; set; }
-        public HitSoundBank HitSample { get; set; }
+        public int          X            { get; set; }
+        public int          Y            { get; set; }
+        public int          Time         { get; set; }
+        public HitSample    HitSoundData { get; set; }
+        public int          EndTime      { get; set; }
+        public int          ParamsCount => 6;
     }
 }

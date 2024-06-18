@@ -6,10 +6,10 @@ using loader = OsuLoader.OsuLoader;
 namespace LibraryTests {
     [TestFixture]
     public class BeatmapTest {
-        private static Tuple<BeatMap, string>[] testCases = [
+        private static Tuple<BeatMap, string>[] testCases = {
             new Tuple<BeatMap, string>(loader.LoadDotOsu("TestFiles/OsuSTD.osu"),         "oldMethod"),
             new Tuple<BeatMap, string>(loader.GetBeatMapFromFile("TestFiles/OsuSTD.osu"), "newMethod")
-        ];
+        };
 
         [TestCaseSource(nameof(testCases))]
         public void GeneralSectionTest(Tuple<BeatMap, string> map) {

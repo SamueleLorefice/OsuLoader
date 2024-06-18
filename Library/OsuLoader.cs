@@ -18,13 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Ini;
-using System.Collections;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+using System.Numerics;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Configuration.Ini;
-using Microsoft.Extensions.FileProviders;
 
 namespace OsuLoader {
     /// <summary>
@@ -338,7 +334,7 @@ namespace OsuLoader {
         /// <summary>
         /// Get a BeatMap object from a .osu file
         /// </summary>
-        /// <param name="fileString">The .osu file as a string</param>
+        /// <param name="osuFile">The .osu file as a strings array</param>
         /// <returns>The BeatMap object</returns>
         /// <remarks>Note that this version requires that you load the osu file from the filesystem.</remarks>
         public static BeatMap GetBeatMap(string[] osuFile) {
@@ -665,7 +661,7 @@ namespace OsuLoader {
                         if (eventString.Length > 3) {
                             bg.XOffset = int.Parse(eventString[3]);
                             bg.YOffset = int.Parse(eventString[4]);
-                        };
+                        }
                         beatMap.Events.Add(bg);
                         break;
                     case "1":
@@ -677,7 +673,7 @@ namespace OsuLoader {
                         if (eventString.Length > 3) {
                             vid.XOffset = int.Parse(eventString[3]);
                             vid.YOffset = int.Parse(eventString[4]);
-                        };
+                        }
                         beatMap.Events.Add(vid);
                         break;
                     case "2":
