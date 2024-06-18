@@ -739,6 +739,80 @@ namespace OsuLoader {
             for (int i = start; i < end; i++) {
                 if (osuFile[i].StartsWith("//")) continue;
                 string[] hitLine = osuFile[i].Split(',');
+                
+                if (hitLine.Length < 6) {
+                    Console.WriteLine($"Invalid hit object at line {i+1}");
+                    continue;
+                }
+
+                IHitObject hitObj;
+                var        typeFlag = (HitObjectType)int.Parse(hitLine[3]);
+                
+                if ((typeFlag & HitObjectType.HitCircle) == HitObjectType.HitCircle)
+                    hitObj = new HitCircle();
+                else if ((typeFlag & HitObjectType.Slider) == HitObjectType.Slider)
+                    hitObj = new Slider();
+                else if ((typeFlag & HitObjectType.Spinner) == HitObjectType.Spinner)
+                    hitObj = new Spinner();
+                else if ((typeFlag & HitObjectType.ManiaHold) == HitObjectType.ManiaHold)
+                    hitObj = new ManiaHold();
+                else {
+                    Console.WriteLine($"Unknown/Unhandled hit object type: \"{hitLine[3]}\" at line {i+1}");
+                    continue;
+                }
+                
+                hitObj.X = int.Parse(hitLine[0]);
+                hitObj.Y = int.Parse(hitLine[1]);
+                hitObj.Time = int.Parse(hitLine[2]);
+
+                if (hitLine.Length == hitObj.ParamsCount) { //check if we have extended sample data.
+                    int hitSampleOffset = hitLine.Length - 5;
+                    hitObj.HitSoundData = new HitSample {
+                        NormalSet   = (HitSoundType)int.Parse(hitLine[hitSampleOffset]),
+                        AdditionSet = (HitSoundBank)int.Parse(hitLine[hitSampleOffset + 1]),
+                        Index       = int.Parse(hitLine[hitSampleOffset + 2]),
+                        Volume      = int.Parse(hitLine[hitSampleOffset + 3]),
+                        Filename    = hitLine[hitSampleOffset + 4]
+                    };
+                } else { //otherwise we just store the normal set
+                    hitObj.HitSoundData = new HitSample() {
+                        NormalSet = (HitSoundType)int.Parse(hitLine[4])
+                    };
+                }
+                switch (hitObj.GetHitObjType()) {
+                    case HitObjectType.HitCircle:
+                        //do nothing because it doesn't have extra data
+                        break;
+                    case HitObjectType.Slider:
+                        var    curveData = hitLine[5].Split('|');
+                        Slider slider = (Slider)hitObj;
+                        slider.CurveType = curveData[0][0] switch {
+                            'B' => CurveType.Bezier,
+                            'C' => CurveType.Centripetal,
+                            'L' => CurveType.Linear,
+                            'P' => CurveType.PerfectCircle,
+                            _   => CurveType.Linear
+                        };
+                        for (int y = 1; y < curveData.Length; y++) {
+                            string[] point = curveData[y].Split(':');
+                            slider.CurvePoints.Add(new Vector2(float.Parse(point[0]), float.Parse(point[1])));
+                        }
+                        slider.Slides = int.Parse(hitLine[6]);
+                        slider.Length = float.Parse(hitLine[7]);
+                        var edgeSounds = hitLine[8].Split('|');
+                        slider.EdgeSounds = edgeSounds.Select(int.Parse).ToList();
+                        var edgeSets = hitLine[9].Split('|');
+                        slider.EdgeSets = edgeSets.Select()
+                        break;
+                    case HitObjectType.Spinner:
+                        break;
+                    case HitObjectType.ManiaHold:
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown/Unhandled hit object type: \"{hitLine[3]}\" at line {i+1}");
+                        break;
+                }
+                beatMap.HitObjects.Add(hitObj);
             }
         }
     }
