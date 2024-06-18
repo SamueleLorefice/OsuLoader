@@ -55,7 +55,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="BeatmapTest.cs"/>
-        <Compile Include="NewMethodsTest.cs"/>
+        <Compile Include="LoaderTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>

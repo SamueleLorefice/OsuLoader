@@ -5,7 +5,7 @@ using loader = OsuLoader.OsuLoader;
 
 namespace LibraryTests {
     [TestFixture]
-    public class NewMethodsTest {
+    public class LoaderTest {
         private const string   Path = "TestFiles/OsuSTD.osu";
         private       string[] beatMapSrc;
         private       BeatMap  stdMap;
