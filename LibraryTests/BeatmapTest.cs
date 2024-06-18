@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using OsuLoader;
 using loader = OsuLoader.OsuLoader;
@@ -6,53 +7,66 @@ using loader = OsuLoader.OsuLoader;
 namespace LibraryTests {
     [TestFixture]
     public class BeatmapTest {
-        private static Tuple<BeatMap, string>[] testCases = {
-            new Tuple<BeatMap, string>(loader.GetBeatMapFromFile("TestFiles/OsuSTD.osu"), "newMethod")
-        };
-
-        [TestCaseSource(nameof(testCases))]
-        public void GeneralSectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        BeatMap                    map;
+        [OneTimeSetUp] public void TestSetup() => map = loader.GetBeatMapFromFile("TestFiles/OsuSTD.osu");
+        
+        [Test]
+        public void GeneralSectionTest() {
+            BeatMap stdmap = map;
             Assert.Multiple(() => {
-                Assert.That(stdmap.AudioFileName,        Is.EqualTo("Music.mp3"),     "AudioFilename is not equal to TestAudio.mp3");
-                Assert.That(stdmap.AudioLeadIn,          Is.EqualTo(1000),            "AudioLeadIn is not equal to 1000");
-                Assert.That(stdmap.PreviewTime,          Is.EqualTo(5000),            "PreviewTime is not equal to 5000");
-                Assert.That(stdmap.Countdown,            Is.EqualTo(1),               "Countdown is not equal to 1");
-                Assert.That(stdmap.SampleSet,            Is.EqualTo("TestSampleSet"), "SampleSet is not equal to TestSampleSet");
-                Assert.That(stdmap.StackLeniency,        Is.EqualTo(0.7f),            "StackLeniency is not equal to 0.7");
-                Assert.That(stdmap.Mode,                 Is.EqualTo(0),               "Mode is not equal to 0");
-                Assert.That(stdmap.LetterBoxInBreaks,    Is.EqualTo(1),               "LetterboxInBreaks is not equal to 1");
-                Assert.That(stdmap.WideScreenStoryboard, Is.EqualTo(1),               "WidescreenStoryboard is not equal to 1");
-                Assert.That(stdmap.EpilepsyWarning,      Is.EqualTo(1),               "EpilepsyWarning is not equal to 1");
+                Assert.That(stdmap.AudioFileName,            Is.EqualTo("Music.mp3"));
+                Assert.That(stdmap.AudioLeadIn,              Is.EqualTo(1000));
+                Assert.That(stdmap.AudioHash,                Is.EqualTo("1234567890"));
+                Assert.That(stdmap.PreviewTime,              Is.EqualTo(5000));
+                Assert.That(stdmap.Countdown,                Is.EqualTo(CountdownType.Normal));
+                Assert.That(stdmap.SampleSet,                Is.EqualTo("TestSampleSet"));
+                Assert.That(stdmap.StackLeniency,            Is.EqualTo(0.7f));
+                Assert.That(stdmap.Mode,                     Is.EqualTo(GameMode.Osu));
+                Assert.That(stdmap.LetterBoxInBreaks,        Is.EqualTo(true));
+                Assert.That(stdmap.StoryFireInFront,         Is.EqualTo(true));
+                Assert.That(stdmap.UseSkinSprites,           Is.EqualTo(true));
+                Assert.That(stdmap.AlwaysShowPlayfield,      Is.EqualTo(true));
+                Assert.That(stdmap.OverlayPosition,          Is.EqualTo(OverlayPosition.Below));
+                Assert.That(stdmap.SkinPreference,           Is.EqualTo("TestSkin"));
+                Assert.That(stdmap.EpilepsyWarning,          Is.EqualTo(true));
+                Assert.That(stdmap.CountdownOffset,          Is.EqualTo(10));
+                Assert.That(stdmap.SpecialStyle,             Is.EqualTo(true));
+                Assert.That(stdmap.WideScreenStoryboard,     Is.EqualTo(true));
+                Assert.That(stdmap.SamplesMatchPlaybackRate, Is.EqualTo(true));
             });
         }
-
-        [TestCaseSource(nameof(testCases))]
-        public void EditorSectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        
+        [Test]
+        public void EditorSectionTest() {
+            BeatMap stdmap = map;
             Assert.Multiple(() => {
                 Assert.That(stdmap.DistanceSpacing, Is.EqualTo(1.0f), "DistanceSpacing is not equal to 1.0");
                 Assert.That(stdmap.BeatDivisor,     Is.EqualTo(4),    "BeatDivisor is not equal to 4");
                 Assert.That(stdmap.GridSize,        Is.EqualTo(16),   "GridSize is not equal to 16");
             });
         }
-
-        [TestCaseSource(nameof(testCases))]
-        public void MetadataSectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        
+        [Test]
+        public void MetadataSectionTest() {
+            BeatMap stdmap = map;
             Assert.Multiple(() => {
-                Assert.That(stdmap.Title,   Is.EqualTo("TestTitle"),           "Title is not equal to TestTitle");
-                Assert.That(stdmap.Artist,  Is.EqualTo("TestArtist"),          "Artist is not equal to TestArtist");
-                Assert.That(stdmap.Creator, Is.EqualTo("TestCreator"),         "Creator is not equal to TestCreator");
-                Assert.That(stdmap.Version, Is.EqualTo("TestVersion"),         "Version is not equal to TestVersion");
-                Assert.That(stdmap.Source,  Is.EqualTo("TestSource"),          "Source is not equal to TestSource");
-                Assert.That(stdmap.Tags,    Is.EqualTo("Test Tags Some More"), "Tags is not equal to TestTags");
+                Assert.That(stdmap.Title,   Is.EqualTo("TestTitle"),   "Title is not equal to TestTitle");
+                Assert.That(stdmap.Artist,  Is.EqualTo("TestArtist"),  "Artist is not equal to TestArtist");
+                Assert.That(stdmap.Creator, Is.EqualTo("TestCreator"), "Creator is not equal to TestCreator");
+                Assert.That(stdmap.Version, Is.EqualTo("TestVersion"), "Version is not equal to TestVersion");
+                Assert.That(stdmap.Source,  Is.EqualTo("TestSource"),  "Source is not equal to TestSource");
+                Assert.That(stdmap.Tags, Is.EqualTo(new List<string> {
+                    "Test",
+                    "Tags",
+                    "Some",
+                    "More"
+                }), "Tags is not equal to TestTags");
             });
         }
-
-        [TestCaseSource(nameof(testCases))]
-        public void DifficultySectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        
+        [Test]
+        public void DifficultySectionTest() {
+            BeatMap stdmap = map;
             Assert.Multiple(() => {
                 Assert.That(stdmap.HpDrainRate,       Is.EqualTo(5.0f), $"HPDrainRate is not equal to 5.0, {stdmap.HpDrainRate}");
                 Assert.That(stdmap.CircleSize,        Is.EqualTo(4.0f), $"CircleSize is not equal to 4.0, {stdmap.CircleSize}");
@@ -62,28 +76,28 @@ namespace LibraryTests {
                 Assert.That(stdmap.SliderTickRate,    Is.EqualTo(1.0f), $"SliderTickRate is not equal to 1.0, {stdmap.SliderTickRate}");
             });
         }
-
-        [TestCaseSource(nameof(testCases))]
-        public void EventsSectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        
+        [Test]
+        public void EventsSectionTest() {
+            BeatMap stdmap = map;
             Assert.Inconclusive("Not yet implemented");
         }
-
-        [TestCaseSource(nameof(testCases))]
-        public void TimingPointsSectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        
+        [Test]
+        public void TimingPointsSectionTest() {
+            BeatMap stdmap = map;
             Assert.Inconclusive("Not yet implemented");
         }
-
-        [TestCaseSource(nameof(testCases))]
-        public void ColoursSectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        
+        [Test]
+        public void ColoursSectionTest() {
+            BeatMap stdmap = map;
             Assert.Inconclusive("Not yet implemented");
         }
-
-        [TestCaseSource(nameof(testCases))]
-        public void HitObjectsSectionTest(Tuple<BeatMap, string> map) {
-            BeatMap stdmap = map.Item1;
+        
+        [Test]
+        public void HitObjectsSectionTest() {
+            BeatMap stdmap = map;
             Assert.Inconclusive("Not yet implemented");
         }
     }
