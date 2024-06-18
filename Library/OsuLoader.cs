@@ -531,5 +531,23 @@ namespace OsuLoader {
                 beatMap.HitObjects.Add(hitObj);
             }
         }
+
+        /// <summary>
+        /// Returns the corresponding .osu file to the provided BeatMap object as a string array
+        /// </summary>
+        /// <param name="beatMap"></param>
+        /// <returns></returns>
+        public static string[] GetOsuFile(BeatMap beatMap) {
+            throw new NotImplementedException();
+        }
+        
+        /// <summary>
+        /// Utility method to write a .osu file from a BeatMap object
+        /// </summary>
+        /// <param name="beatMap">The BeatMap object to write.</param>
+        /// <param name="path">Absolute or relative path where to write it.</param>
+        public static void WriteOsuFile(BeatMap beatMap, string path) {
+            File.WriteAllLines(path, GetOsuFile(beatMap));
+        }
     }
 }
