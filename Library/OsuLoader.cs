@@ -182,15 +182,18 @@ namespace OsuLoader {
         private static Dictionary<string, string> GetKeyPairs(string[] osuFile, ref int cursor) {
             Dictionary<string, string> keyPairs = new Dictionary<string, string>();
             for (int i = cursor; i < osuFile.Length; i++) {
-                //skip comments
-                if (osuFile[i].StartsWith("//")) continue;
                 //check if we reached the next section
-                if (osuFile[i].StartsWith("[")) {
+                if (osuFile[i].StartsWith("[") && i != cursor) {
                     cursor = i;
                     break;
                 }
+                //skip comments
+                if (osuFile[i].StartsWith("//")) continue;
+                //skip empty lines or non key-value pairs
+                if(!osuFile[i].Contains(":")) continue;
+                
                 string[] split = osuFile[i].Split(':');
-                keyPairs.Add(split[0], split[1]);
+                keyPairs.Add(split[0].Trim(), split[1].TrimStart());
             }
             return keyPairs;
         }
@@ -222,17 +225,17 @@ namespace OsuLoader {
                     case "Mode":
                         beatMap.Mode = (GameMode)int.Parse(pair.Value);
                         break;
-                    case "LetterBoxInBreaks":
-                        beatMap.LetterBoxInBreaks = bool.Parse(pair.Value);
+                    case "LetterboxInBreaks":
+                        beatMap.LetterBoxInBreaks = pair.Value != "0";
                         break;
                     case "StoryFireInFront":
-                        beatMap.StoryFireInFront = bool.Parse(pair.Value);
+                        beatMap.StoryFireInFront = pair.Value != "0";
                         break;
                     case "UseSkinSprites":
-                        beatMap.UseSkinSprites = bool.Parse(pair.Value);
+                        beatMap.UseSkinSprites = pair.Value != "0";
                         break;
                     case "AlwaysShowPlayfield":
-                        beatMap.AlwaysShowPlayfield = bool.Parse(pair.Value);
+                        beatMap.AlwaysShowPlayfield = pair.Value != "0";
                         break;
                     case "OverlayPosition":
                         beatMap.OverlayPosition = (OverlayPosition)int.Parse(pair.Value);
@@ -241,19 +244,19 @@ namespace OsuLoader {
                         beatMap.SkinPreference = pair.Value;
                         break;
                     case "EpilepsyWarning":
-                        beatMap.EpilepsyWarning = bool.Parse(pair.Value);
+                        beatMap.EpilepsyWarning = pair.Value != "0";
                         break;
                     case "CountdownOffset":
                         beatMap.CountdownOffset = int.Parse(pair.Value);
                         break;
                     case "SpecialStyle":
-                        beatMap.SpecialStyle = bool.Parse(pair.Value);
+                        beatMap.SpecialStyle = pair.Value != "0";
                         break;
-                    case "WideScreenStoryboard":
-                        beatMap.WideScreenStoryboard = bool.Parse(pair.Value);
+                    case "WidescreenStoryboard":
+                        beatMap.WideScreenStoryboard = pair.Value != "0";
                         break;
                     case "SamplesMatchPlaybackRate":
-                        beatMap.SamplesMatchPlaybackRate = bool.Parse(pair.Value);
+                        beatMap.SamplesMatchPlaybackRate = pair.Value != "0";
                         break;
                     default:
                         Console.WriteLine($"Unknown/Unhandled general key: \"{pair.Key}\"");
