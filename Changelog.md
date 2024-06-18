@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - Added support for slider color overrides in Color section
 - Tags are now read as a list rather than a single string.
 - Added support for all timing effects rather than just Kiai time.
+- [**breaking**] Added HitObjects Supporting data structures.
+- [**breaking**] Removed SingleNotes and LongNotes
 
 ### 🐛 Bug Fixes
 

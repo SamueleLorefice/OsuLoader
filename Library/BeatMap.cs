@@ -267,16 +267,10 @@ namespace OsuLoader
         #endregion
 
         #region Hit Objects
-
         /// <summary>
-        /// List of the single notes (non-hold notes)
+        /// list of all hitObjects contained in the beatmap.
         /// </summary>
-        public List<Note> SingleNotes { get; set; }
-
-        /// <summary>
-        /// List of hold notes (sliders)
-        /// </summary>
-        public List<LongNote> LongNotes { get; set; }
+        List<IHitObject> HitObjects { get; set; }
 
         #endregion
     }

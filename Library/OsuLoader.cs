@@ -145,8 +145,9 @@ namespace OsuLoader
             int hitIndex = Array.IndexOf(partialBm, "[HitObjects]");
             //initialize parsedMap timing point list and notes point list
             parsedMap.TimingPoints = new List<TimingPoint>();
+            /*
             parsedMap.SingleNotes = new List<Note>();
-            parsedMap.LongNotes = new List<LongNote>();
+            parsedMap.LongNotes = new List<LongNote>();*/
             //read the timing points
             for (int i = timingIndex; i < hitIndex; i++)
             {
@@ -154,20 +155,7 @@ namespace OsuLoader
                 if (parsed.Offset != 0)
                     parsedMap.TimingPoints.Add(parsed);
             }
-            //read the single notes
-            for (int i = hitIndex; i < partialBm.Length; i++)
-            {
-                Note parsed = ParseSingleNote(partialBm[i]);
-                if (parsed.Time != 0)
-                    parsedMap.SingleNotes.Add(parsed);
-            }
-            //read the long notes
-            for (int i = hitIndex; i < partialBm.Length; i++)
-            {
-                LongNote parsed = ParseLongNote(partialBm[i]);
-                if (parsed.StartTime != 0)
-                    parsedMap.LongNotes.Add(parsed);
-            }
+            //TODO: read the hit objects
             #endregion
             return parsedMap;
         }
@@ -235,7 +223,7 @@ namespace OsuLoader
                 "\r\nSliderTickRate: " + toWrite.SliderTickRate);
             beatmap.WriteAllSection("Colours", GetColoursToSave(toWrite));
             beatmap.WriteAllSection("TimingPoints", GetTimingPointString(toWrite.TimingPoints));
-            beatmap.WriteAllSection("HitObjects", GetHitObjectsString(toWrite.SingleNotes, toWrite.LongNotes));
+            //TODO: write hit objects
         }
         
         static string GetColoursToSave(BeatMap toWrite)
@@ -299,9 +287,10 @@ namespace OsuLoader
             }
         }
 
-        static string GetHitObjectsString(List<Note> sn, List<LongNote> ln)
+        static string GetHitObjectsString(List<IHitObject> notes)
         {
             string hitObjStr = "";
+            /*
             foreach (var note in sn)
             {
                 //x,y,time,type,hitSound,addition
@@ -348,86 +337,8 @@ namespace OsuLoader
                 hitObjStr += note.EndTime;
                 hitObjStr += "0:0:0:0:\r\n";
             }
-            return hitObjStr;
-        }
-
-        /// <summary>
-        /// Parse a single note
-        /// </summary>
-        /// <returns>The single note</returns>
-        /// <param name="toParse">string containing a single note</param>
-        private static Note ParseSingleNote(string toParse)
-        {
-            string[] split = toParse.Split(new string[] { "," }, StringSplitOptions.None);
-            if (split.Length != 6 || split[3] != "1")
-            {
-                return new Note();
-            }
-            else {
-                //check if single note
-                Note toReturn = new Note();
-                //Detect the note column
-                switch (int.Parse(split[0]))
-                {
-                    case 64:
-                        toReturn.Column = 0;
-                        break;
-                    case 192:
-                        toReturn.Column = 1;
-                        break;
-                    case 320:
-                        toReturn.Column = 2;
-                        break;
-                    case 448:
-                        toReturn.Column = 3;
-                        break;
-                    default:
-                        return new Note();
-                }
-                //detect time
-                toReturn.Time = int.Parse(split[2]);
-                return toReturn;
-            }
-        }
-
-        /// <summary>
-        /// Parse a long note
-        /// </summary>
-        /// <returns>The long note</returns>
-        /// <param name="toParse">string containing a long note</param>
-        private static LongNote ParseLongNote(string toParse)
-        {
-            string[] split = toParse.Split(new string[] { "," }, StringSplitOptions.None);
-            if (split.Length != 6 || split[3] != "128")
-            {
-                return new LongNote();
-            }
-            else {
-                LongNote toReturn = new LongNote();
-                //Detect the note column
-                switch (int.Parse(split[0]))
-                {
-                    case 64:
-                        toReturn.Column = 0;
-                        break;
-                    case 192:
-                        toReturn.Column = 1;
-                        break;
-                    case 320:
-                        toReturn.Column = 2;
-                        break;
-                    case 448:
-                        toReturn.Column = 3;
-                        break;
-                    default:
-                        return new LongNote();
-                }
-                //detect time
-                toReturn.StartTime = int.Parse(split[2]);
-                string[] endCode = split[5].Split(new string[] { ":" }, StringSplitOptions.None);
-                toReturn.EndTime = int.Parse(endCode[0]);
-                return toReturn;
-            }
+            return hitObjStr;*/
+            throw new NotImplementedException();
         }
     }
 }
