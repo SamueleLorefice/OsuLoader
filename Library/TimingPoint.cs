@@ -23,12 +23,12 @@ namespace OsuLoader {
         /// <summary>
         /// Offset of the track timing (if inherithed is the distance from the last non inherithed timing point)
         /// </summary>
-        public int Offset { get; set; }
+        public double Offset { get; set; }
 
         /// <summary>
         /// Time for each beat, if inherited, negative inverse slider velocity multiplier instead.
         /// </summary>
-        public float MilliSecondPerBeat { get; set; }
+        public double MilliSecondPerBeat { get; set; }
 
         /// <summary>
         /// Beats per measure, ignored if inherited

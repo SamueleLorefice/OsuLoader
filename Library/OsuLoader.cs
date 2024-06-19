@@ -183,18 +183,26 @@ namespace OsuLoader {
         internal static Dictionary<string, string> GetKeyPairs(string[] osuFile, ref int cursor) {
             Dictionary<string, string> keyPairs = new Dictionary<string, string>();
             for (int i = cursor; i < osuFile.Length; i++) {
+                string temp = osuFile[i];
+                //skip empty lines or non key-value pairs
+                if(!temp.Contains(":")) continue;
+                
                 //check if we reached the next section
-                if (osuFile[i].StartsWith("[") && i != cursor) {
+                if (temp.StartsWith("[") && i != cursor && Regex.IsMatch(temp, @"^\[.*\]$")) {
                     cursor = i;
                     break;
                 }
-                //skip comments
-                if (osuFile[i].StartsWith("//")) continue;
-                //skip empty lines or non key-value pairs
-                if(!osuFile[i].Contains(":")) continue;
                 
-                string[] split = osuFile[i].Split(':');
-                keyPairs.Add(split[0].Trim(), split[1].TrimStart());
+                //remove comments
+                temp = temp.Split('#')[0];
+                temp = temp.Split(';')[0];
+                temp = temp.Split("//")[0];
+                
+                string[] split = temp.Split(':');
+                if(split.Length != 2) continue; //reject malformed key-value pairs
+                if(split[0].Trim() == string.Empty || split[1].Trim() == string.Empty) continue;
+                
+                keyPairs.Add(split[0].Trim(), split[1].Trim());
             }
             return keyPairs;
         }
@@ -239,7 +247,7 @@ namespace OsuLoader {
                         beatMap.AlwaysShowPlayfield = pair.Value != "0";
                         break;
                     case "OverlayPosition":
-                        beatMap.OverlayPosition = (OverlayPosition)int.Parse(pair.Value);
+                        beatMap.OverlayPosition = (OverlayPosition)Enum.Parse(typeof(OverlayPosition), pair.Value);
                         break;
                     case "SkinPreference":
                         beatMap.SkinPreference = pair.Value;
@@ -266,7 +274,8 @@ namespace OsuLoader {
         }
 
         internal static void ParseEditorSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
-            foreach (KeyValuePair<string, string> pair in keyPairs)
+            foreach (KeyValuePair<string, string> pair in keyPairs) {
+                if (pair.Value == string.Empty) continue;
                 switch (pair.Key) {
                     case "Bookmarks":
                         beatMap.Bookmarks = pair.Value.Split(',').Select(int.Parse).ToList();
@@ -287,6 +296,7 @@ namespace OsuLoader {
                         Console.WriteLine($"Unknown/Unhandled editor key: \"{pair.Key}\"");
                         break;
                 }
+            }
         }
 
         internal static void ParseMetadataSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
@@ -394,6 +404,22 @@ namespace OsuLoader {
                         };
                         beatMap.Events.Add(brk);
                         break;
+                    case "3":
+                    case "colour":
+                        //TODO: implement colour event parsing
+                        break;
+                    case "4":
+                    case "sprite":
+                        //TODO: implement sprite event parsing
+                        break;
+                    case "5":
+                    case "sample":
+                        //TODO: implement sample event parsing
+                        break;
+                    case "6":
+                    case "animation":
+                        //TODO: implement animation event parsing
+                        break;
                     default:
                         Console.WriteLine($"Unknown/Unhandled event type: \"{osuFile[i]}\" at line {i+1}");
                         break;
@@ -411,8 +437,8 @@ namespace OsuLoader {
                     continue;
                 }
                 TimingPoint tp = new TimingPoint {
-                    Offset             = int.Parse(timingString[0]),
-                    MilliSecondPerBeat = float.Parse(timingString[1]),
+                    Offset             = double.Parse(timingString[0]),
+                    MilliSecondPerBeat = double.Parse(timingString[1]),
                     Meter              = int.Parse(timingString[2]),
                     SampleSet          = (HitSoundBank)int.Parse(timingString[3]),
                     SampleIndex        = int.Parse(timingString[4]),
@@ -420,7 +446,6 @@ namespace OsuLoader {
                     Uninherited        = int.Parse(timingString[6]) == 1,
                     Effects            = int.Parse(timingString[7]) == 1 ? TimingEffect.Kiai :
                                          int.Parse(timingString[7]) == 3 ? TimingEffect.OmitFirstBarLine : TimingEffect.None
-                    
                 };
                 beatMap.TimingPoints.Add(tp);
             }

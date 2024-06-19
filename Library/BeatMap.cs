@@ -28,7 +28,7 @@ namespace OsuLoader {
         /// <summary>
         /// fileVersion of the .osu file.
         /// </summary>
-        public string OsuVersion { get; set; } = "v14";
+        public string OsuVersion { get; set; }
 
         #region General
 
@@ -330,10 +330,14 @@ namespace OsuLoader {
                        ApproachRate.Equals(other.ApproachRate)                                       &&
                        SliderMultiplier.Equals(other.SliderMultiplier)                               &&
                        SliderTickRate.Equals(other.SliderTickRate)                                   &&
-                       Events.All(other.Events.Contains)                                             && Events.Count       == other.Events.Count       &&
-                       TimingPoints.All(other.TimingPoints.Contains)                                 && TimingPoints.Count == other.TimingPoints.Count &&
-                       Colours.All(other.Colours.Contains)                                           && Colours.Count      == other.Colours.Count      &&
-                       HitObjects.All(other.HitObjects.Contains)                                     && HitObjects.Count   == other.HitObjects.Count;
+                       Events.All(other.Events.Contains)                                             &&
+                       Events.Count       == other.Events.Count                                      &&
+                       TimingPoints.All(other.TimingPoints.Contains)                                 &&
+                       TimingPoints.Count == other.TimingPoints.Count                                &&
+                       Colours.All(other.Colours.Contains)                                           &&
+                       Colours.Count      == other.Colours.Count                                     &&
+                       HitObjects.All(other.HitObjects.Contains)                                     &&
+                       HitObjects.Count   == other.HitObjects.Count;
         }
 
         public override bool Equals(object obj) {
@@ -456,6 +460,8 @@ namespace OsuLoader {
                         section.Add($"{prop}: {((TimingEffect)value).ToIniString()}");
                     else if (value is float f)
                         section.Add($"{prop}: {f:0.##}");
+                    else if(value is double d)
+                        section.Add($"{prop}: {d:0.##}");
                     else
                         section.Add($"{prop}: {value}");
                 }
