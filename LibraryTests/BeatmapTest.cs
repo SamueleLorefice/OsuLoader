@@ -14,7 +14,7 @@ namespace LibraryTests {
         public void GeneralSectionTest() {
             BeatMap stdmap = map;
             Assert.Multiple(() => {
-                Assert.That(stdmap.AudioFileName,            Is.EqualTo("Music.mp3"));
+                Assert.That(stdmap.AudioFilename,            Is.EqualTo("Music.mp3"));
                 Assert.That(stdmap.AudioLeadIn,              Is.EqualTo(1000));
                 Assert.That(stdmap.AudioHash,                Is.EqualTo("1234567890"));
                 Assert.That(stdmap.PreviewTime,              Is.EqualTo(5000));
@@ -22,7 +22,7 @@ namespace LibraryTests {
                 Assert.That(stdmap.SampleSet,                Is.EqualTo("TestSampleSet"));
                 Assert.That(stdmap.StackLeniency,            Is.EqualTo(0.7f));
                 Assert.That(stdmap.Mode,                     Is.EqualTo(GameMode.Osu));
-                Assert.That(stdmap.LetterBoxInBreaks,        Is.EqualTo(true));
+                Assert.That(stdmap.LetterboxInBreaks,        Is.EqualTo(true));
                 Assert.That(stdmap.StoryFireInFront,         Is.EqualTo(true));
                 Assert.That(stdmap.UseSkinSprites,           Is.EqualTo(true));
                 Assert.That(stdmap.AlwaysShowPlayfield,      Is.EqualTo(true));
@@ -31,7 +31,7 @@ namespace LibraryTests {
                 Assert.That(stdmap.EpilepsyWarning,          Is.EqualTo(true));
                 Assert.That(stdmap.CountdownOffset,          Is.EqualTo(10));
                 Assert.That(stdmap.SpecialStyle,             Is.EqualTo(true));
-                Assert.That(stdmap.WideScreenStoryboard,     Is.EqualTo(true));
+                Assert.That(stdmap.WidescreenStoryboard,     Is.EqualTo(true));
                 Assert.That(stdmap.SamplesMatchPlaybackRate, Is.EqualTo(true));
             });
         }

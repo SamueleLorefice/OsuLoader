@@ -16,12 +16,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace OsuLoader {
     /// <summary>
     /// Represent all the data from a .osu file (use osu loader to initialize this object.)
     /// </summary>
-    public class BeatMap {
+    public class BeatMap : IEquatable<BeatMap> {
 
         /// <summary>
         /// fileVersion of the .osu file.
@@ -33,7 +35,7 @@ namespace OsuLoader {
         /// <summary>
         /// The name of the file mp3.
         /// </summary>
-        public string AudioFileName { get; set; }
+        public string AudioFilename { get; set; }
 
         /// <summary>
         /// The time before the actual track start to play. (in milliseconds)
@@ -73,7 +75,7 @@ namespace OsuLoader {
         /// <summary>
         /// Specifies if the screen should use letterbox while in breaks.
         /// </summary>
-        public bool LetterBoxInBreaks { get; set; } = false;
+        public bool LetterboxInBreaks { get; set; } = false;
 
         /// <summary>
         /// deprecated, here for compatibility.
@@ -118,7 +120,7 @@ namespace OsuLoader {
         /// <summary>
         /// specifies whether the storyboard should be widescreen.
         /// </summary>
-        public bool WideScreenStoryboard { get; set; }
+        public bool WidescreenStoryboard { get; set; }
 
         /// <summary>
         /// If the sound samples should be stretched when using song speed modifiers.
@@ -280,5 +282,184 @@ namespace OsuLoader {
         public List<IHitObject> HitObjects { get; set; } = new List<IHitObject>();
 
         #endregion
+
+        public bool Equals(BeatMap other) {
+            if (other is null)
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            else
+                return string.Equals(OsuVersion,    other.OsuVersion,    StringComparison.Ordinal)   &&
+                       string.Equals(AudioFilename, other.AudioFilename, StringComparison.Ordinal)   &&
+                       AudioLeadIn == other.AudioLeadIn                                              &&
+                       string.Equals(AudioHash, other.AudioHash, StringComparison.Ordinal)           &&
+                       PreviewTime == other.PreviewTime                                              &&
+                       Countdown   == other.Countdown                                                &&
+                       string.Equals(SampleSet, other.SampleSet, StringComparison.Ordinal)           &&
+                       StackLeniency.Equals(other.StackLeniency)                                     &&
+                       Mode                == other.Mode                                             &&
+                       LetterboxInBreaks   == other.LetterboxInBreaks                                &&
+                       StoryFireInFront    == other.StoryFireInFront                                 &&
+                       UseSkinSprites      == other.UseSkinSprites                                   &&
+                       AlwaysShowPlayfield == other.AlwaysShowPlayfield                              &&
+                       OverlayPosition     == other.OverlayPosition                                  &&
+                       string.Equals(SkinPreference, other.SkinPreference, StringComparison.Ordinal) &&
+                       EpilepsyWarning          == other.EpilepsyWarning                             &&
+                       CountdownOffset          == other.CountdownOffset                             &&
+                       SpecialStyle             == other.SpecialStyle                                &&
+                       WidescreenStoryboard     == other.WidescreenStoryboard                        &&
+                       SamplesMatchPlaybackRate == other.SamplesMatchPlaybackRate                    &&
+                       DistanceSpacing.Equals(other.DistanceSpacing)                                 &&
+                       BeatDivisor == other.BeatDivisor                                              &&
+                       GridSize    == other.GridSize                                                 &&
+                       TimelineZoom.Equals(other.TimelineZoom)                                       &&
+                       string.Equals(Title,         other.Title,         StringComparison.Ordinal)   &&
+                       string.Equals(TitleUnicode,  other.TitleUnicode,  StringComparison.Ordinal)   &&
+                       string.Equals(Artist,        other.Artist,        StringComparison.Ordinal)   &&
+                       string.Equals(ArtistUnicode, other.ArtistUnicode, StringComparison.Ordinal)   &&
+                       string.Equals(Creator,       other.Creator,       StringComparison.Ordinal)   &&
+                       string.Equals(Version,       other.Version,       StringComparison.Ordinal)   &&
+                       string.Equals(Source,        other.Source,        StringComparison.Ordinal)   &&
+                       Tags.All(other.Tags.Contains)                                                 &&
+                       Tags.Count   == other.Tags.Count                                              &&
+                       BeatmapId    == other.BeatmapId                                               &&
+                       BeatmapSetId == other.BeatmapSetId                                            &&
+                       HpDrainRate.Equals(other.HpDrainRate)                                         &&
+                       CircleSize.Equals(other.CircleSize)                                           &&
+                       OverallDifficulty.Equals(other.OverallDifficulty)                             &&
+                       ApproachRate.Equals(other.ApproachRate)                                       &&
+                       SliderMultiplier.Equals(other.SliderMultiplier)                               &&
+                       SliderTickRate.Equals(other.SliderTickRate)                                   &&
+                       Events.All(other.Events.Contains)                                             && Events.Count       == other.Events.Count       &&
+                       TimingPoints.All(other.TimingPoints.Contains)                                 && TimingPoints.Count == other.TimingPoints.Count &&
+                       Colours.All(other.Colours.Contains)                                           && Colours.Count      == other.Colours.Count      &&
+                       HitObjects.All(other.HitObjects.Contains)                                     && HitObjects.Count   == other.HitObjects.Count;
+        }
+
+        public override bool Equals(object obj) {
+            if (obj is null)
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (obj.GetType() != typeof(BeatMap))
+                return false;
+            return Equals((BeatMap)obj);
+        }
+
+        public override int GetHashCode() {
+            unchecked {
+                int hashCode = (OsuVersion != null ? StringComparer.InvariantCulture.GetHashCode(OsuVersion) : 0);
+                hashCode = (hashCode * 397) ^ (AudioFilename != null ? StringComparer.InvariantCulture.GetHashCode(AudioFilename) : 0);
+                hashCode = (hashCode * 397) ^ AudioLeadIn;
+                hashCode = (hashCode * 397) ^ (AudioHash != null ? StringComparer.InvariantCulture.GetHashCode(AudioHash) : 0);
+                hashCode = (hashCode * 397) ^ PreviewTime;
+                hashCode = (hashCode * 397) ^ (int)Countdown;
+                hashCode = (hashCode * 397) ^ (SampleSet != null ? StringComparer.InvariantCulture.GetHashCode(SampleSet) : 0);
+                hashCode = (hashCode * 397) ^ StackLeniency.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int)Mode;
+                hashCode = (hashCode * 397) ^ LetterboxInBreaks.GetHashCode();
+                hashCode = (hashCode * 397) ^ StoryFireInFront.GetHashCode();
+                hashCode = (hashCode * 397) ^ UseSkinSprites.GetHashCode();
+                hashCode = (hashCode * 397) ^ AlwaysShowPlayfield.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int)OverlayPosition;
+                hashCode = (hashCode * 397) ^ (SkinPreference != null ? StringComparer.InvariantCulture.GetHashCode(SkinPreference) : 0);
+                hashCode = (hashCode * 397) ^ EpilepsyWarning.GetHashCode();
+                hashCode = (hashCode * 397) ^ CountdownOffset;
+                hashCode = (hashCode * 397) ^ SpecialStyle.GetHashCode();
+                hashCode = (hashCode * 397) ^ WidescreenStoryboard.GetHashCode();
+                hashCode = (hashCode * 397) ^ SamplesMatchPlaybackRate.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Bookmarks != null ? Bookmarks.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ DistanceSpacing.GetHashCode();
+                hashCode = (hashCode * 397) ^ BeatDivisor;
+                hashCode = (hashCode * 397) ^ GridSize;
+                hashCode = (hashCode * 397) ^ TimelineZoom.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Title         != null ? StringComparer.InvariantCulture.GetHashCode(Title) : 0);
+                hashCode = (hashCode * 397) ^ (TitleUnicode  != null ? StringComparer.InvariantCulture.GetHashCode(TitleUnicode) : 0);
+                hashCode = (hashCode * 397) ^ (Artist        != null ? StringComparer.InvariantCulture.GetHashCode(Artist) : 0);
+                hashCode = (hashCode * 397) ^ (ArtistUnicode != null ? StringComparer.InvariantCulture.GetHashCode(ArtistUnicode) : 0);
+                hashCode = (hashCode * 397) ^ (Creator       != null ? StringComparer.InvariantCulture.GetHashCode(Creator) : 0);
+                hashCode = (hashCode * 397) ^ (Version       != null ? StringComparer.InvariantCulture.GetHashCode(Version) : 0);
+                hashCode = (hashCode * 397) ^ (Source        != null ? StringComparer.InvariantCulture.GetHashCode(Source) : 0);
+                hashCode = (hashCode * 397) ^ (Tags          != null ? Tags.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ BeatmapId;
+                hashCode = (hashCode * 397) ^ BeatmapSetId;
+                hashCode = (hashCode * 397) ^ HpDrainRate.GetHashCode();
+                hashCode = (hashCode * 397) ^ CircleSize.GetHashCode();
+                hashCode = (hashCode * 397) ^ OverallDifficulty.GetHashCode();
+                hashCode = (hashCode * 397) ^ ApproachRate.GetHashCode();
+                hashCode = (hashCode * 397) ^ SliderMultiplier.GetHashCode();
+                hashCode = (hashCode * 397) ^ SliderTickRate.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Events       != null ? Events.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (TimingPoints != null ? TimingPoints.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Colours      != null ? Colours.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (HitObjects   != null ? HitObjects.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(BeatMap left, BeatMap right) {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(BeatMap left, BeatMap right) {
+            return !Equals(left, right);
+        }
+    }
+
+    public static class BeatMapExtensions {
+        internal static readonly string[] GeneralSectionProps = new string[] {
+            "AudioFilename",
+            "AudioLeadIn",
+            "AudioHash",
+            "PreviewTime",
+            "Countdown",
+            "SampleSet",
+            "StackLeniency",
+            "Mode",
+            "LetterboxInBreaks",
+            "StoryFireInFront",
+            "UseSkinSprites",
+            "AlwaysShowPlayfield",
+            "OverlayPosition",
+            "SkinPreference",
+            "EpilepsyWarning",
+            "CountdownOffset",
+            "SpecialStyle",
+            "WidescreenStoryboard",
+            "SamplesMatchPlaybackRate"
+        };
+
+        public static string GetVersionString(this BeatMap bm) {
+            return $"osu file format {bm.OsuVersion}";
+        }
+
+        public static string[] GetGeneralSection(this BeatMap bm) {
+            List<string> sectionSrt = new List<string>() { "[General]" };
+            EmitIniKeyValues(GeneralSectionProps, ref sectionSrt, bm);
+            return sectionSrt.ToArray();
+        }
+
+        private static void EmitIniKeyValues(string[] props, ref List<string> section, BeatMap bm) {
+            foreach (string prop in props) {
+                PropertyInfo pi    = typeof(BeatMap).GetProperty(prop);
+                object       value = pi!.GetValue(bm);
+                if (value != null) {
+                    if (value is bool b)
+                        section.Add($"{prop}: {(b ? 1 : 0)}");
+                    else if (value is OverlayPosition)
+                        section.Add($"{prop}: {((OverlayPosition)value).ToIniString()}");
+                    else if (value is GameMode)
+                        section.Add($"{prop}: {((GameMode)value).ToIniString()}");
+                    else if (value is CountdownType)
+                        section.Add($"{prop}: {((CountdownType)value).ToIniString()}");
+                    else if (value is TimingEffect)
+                        section.Add($"{prop}: {((TimingEffect)value).ToIniString()}");
+                    else if (value is float f)
+                        section.Add($"{prop}: {f:0.##}");
+                    else
+                        section.Add($"{prop}: {value}");
+                }
+            }
+        }
     }
 }

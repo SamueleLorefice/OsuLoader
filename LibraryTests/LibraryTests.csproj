@@ -54,6 +54,7 @@
         <Reference Include="System.Xml"/>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="BeatMapExtensions.cs" />
         <Compile Include="BeatmapTest.cs"/>
         <Compile Include="LoaderTest.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>

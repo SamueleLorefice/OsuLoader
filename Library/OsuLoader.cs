@@ -19,12 +19,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
+[assembly: InternalsVisibleTo("LibraryTests")]
 namespace OsuLoader {
-    /// <summary>
-    /// Static class that manages the loading a deserialization of .osu files.
-    /// </summary>
+
     public static class OsuLoader {
         /// <summary>
         /// Get a BeatMap object from a .osu file
@@ -179,7 +180,7 @@ namespace OsuLoader {
             return -1;
         }
 
-        private static Dictionary<string, string> GetKeyPairs(string[] osuFile, ref int cursor) {
+        internal static Dictionary<string, string> GetKeyPairs(string[] osuFile, ref int cursor) {
             Dictionary<string, string> keyPairs = new Dictionary<string, string>();
             for (int i = cursor; i < osuFile.Length; i++) {
                 //check if we reached the next section
@@ -198,11 +199,11 @@ namespace OsuLoader {
             return keyPairs;
         }
 
-        private static void ParseGeneralSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+        internal static void ParseGeneralSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
             foreach (KeyValuePair<string, string> pair in keyPairs)
                 switch (pair.Key) {
                     case "AudioFilename":
-                        beatMap.AudioFileName = pair.Value;
+                        beatMap.AudioFilename = pair.Value;
                         break;
                     case "AudioLeadIn":
                         beatMap.AudioLeadIn = int.Parse(pair.Value);
@@ -226,7 +227,7 @@ namespace OsuLoader {
                         beatMap.Mode = (GameMode)int.Parse(pair.Value);
                         break;
                     case "LetterboxInBreaks":
-                        beatMap.LetterBoxInBreaks = pair.Value != "0";
+                        beatMap.LetterboxInBreaks = pair.Value != "0";
                         break;
                     case "StoryFireInFront":
                         beatMap.StoryFireInFront = pair.Value != "0";
@@ -253,7 +254,7 @@ namespace OsuLoader {
                         beatMap.SpecialStyle = pair.Value != "0";
                         break;
                     case "WidescreenStoryboard":
-                        beatMap.WideScreenStoryboard = pair.Value != "0";
+                        beatMap.WidescreenStoryboard = pair.Value != "0";
                         break;
                     case "SamplesMatchPlaybackRate":
                         beatMap.SamplesMatchPlaybackRate = pair.Value != "0";
@@ -264,7 +265,7 @@ namespace OsuLoader {
                 }
         }
 
-        private static void ParseEditorSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+        internal static void ParseEditorSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
             foreach (KeyValuePair<string, string> pair in keyPairs)
                 switch (pair.Key) {
                     case "Bookmarks":
@@ -288,7 +289,7 @@ namespace OsuLoader {
                 }
         }
 
-        private static void ParseMetadataSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+        internal static void ParseMetadataSection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
             foreach (KeyValuePair<string, string> pair in keyPairs)
                 switch (pair.Key) {
                     case "Title":
@@ -327,7 +328,7 @@ namespace OsuLoader {
                 }
         }
         
-        private static void ParseDifficultySection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
+        internal static void ParseDifficultySection(Dictionary<string, string> keyPairs, ref BeatMap beatMap) {
             foreach (KeyValuePair<string, string> pair in keyPairs)
                 switch (pair.Key) {
                     case "HPDrainRate":
@@ -354,7 +355,7 @@ namespace OsuLoader {
                 }
         }
         
-        private static void ParseEventSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+        internal static void ParseEventSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
             for (int i = start; i < end; i++) {
                 if (osuFile[i].StartsWith("//")) continue;
                 
@@ -400,7 +401,7 @@ namespace OsuLoader {
             }
         }
         
-        private static void ParseTimingPointsSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+        internal static void ParseTimingPointsSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
             for (int i = start; i < end; i++) {
                 if (osuFile[i].StartsWith("//")) continue;
                 
@@ -425,7 +426,7 @@ namespace OsuLoader {
             }
         }
         
-        private static void ParseColoursSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+        internal static void ParseColoursSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
             for (int i = start; i < end; i++) {
                 if (osuFile[i].StartsWith("//")) continue;
                 
@@ -444,7 +445,7 @@ namespace OsuLoader {
             }
         }
         
-        private static void ParseHitObjectsSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
+        internal static void ParseHitObjectsSection(string[] osuFile, int start, int end, ref BeatMap beatMap) {
             for (int i = start; i < end; i++) {
                 if (osuFile[i].StartsWith("//")) continue;
                 string[] hitLine = osuFile[i].Split(',');
