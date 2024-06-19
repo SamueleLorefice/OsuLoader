@@ -1,9 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryTests", "LibraryTests\LibraryTests.csproj", "{EF913153-0AC0-44B6-AEEA-595191077B0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryTests", "LibraryTests\LibraryTests.csproj", "{EF913153-0AC0-44B6-AEEA-595191077B0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsuLoaderLib", "Library\OsuLoaderLib.csproj", "{42C048BD-66AF-4B1A-867E-F2710B9BEFF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OsuLoaderLib", "Library\OsuLoaderLib.csproj", "{42C048BD-66AF-4B1A-867E-F2710B9BEFF1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{567EDE91-BCB1-43D4-921C-5AC00C4804DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +20,9 @@ Global
 		{42C048BD-66AF-4B1A-867E-F2710B9BEFF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{42C048BD-66AF-4B1A-867E-F2710B9BEFF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42C048BD-66AF-4B1A-867E-F2710B9BEFF1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{567EDE91-BCB1-43D4-921C-5AC00C4804DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{567EDE91-BCB1-43D4-921C-5AC00C4804DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{567EDE91-BCB1-43D4-921C-5AC00C4804DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{567EDE91-BCB1-43D4-921C-5AC00C4804DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
